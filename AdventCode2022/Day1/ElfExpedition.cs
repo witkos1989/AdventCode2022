@@ -27,20 +27,11 @@ public sealed class ElfExpedition
 		return results;
 	}
 
-	private int ElfWithMaximalCalories()
-	{
-		IEnumerable<int> summedCalories = SumCalories(_data);
+	private int ElfWithMaximalCalories() =>
+		SumCalories(_data).Max();
 
-		return summedCalories.Max();
-	}
-
-	private int TopThreeElvesWithMaximalCalories()
-	{
-		IEnumerable<int> summedCalories = SumCalories(_data).
-		OrderDescending();
-
-		return summedCalories.Take(3).Sum();
-	}
+	private int TopThreeElvesWithMaximalCalories() =>
+        SumCalories(_data).OrderDescending().ToArray().Take(3).Sum();
 
 	private static IEnumerable<int> SumCalories(List<List<int>> elfFoods)
 	{

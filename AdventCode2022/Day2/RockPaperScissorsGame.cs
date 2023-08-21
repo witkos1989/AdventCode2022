@@ -51,70 +51,36 @@ public sealed class RockPaperScissorsGame
         return sum;
     }
 
-    private static int GetGameResultPointsWithCode(char[] selections)
-    {
-        int roundResult = selections[1] == 'X' ? 0 :
-            selections[1] == 'Y' ? 3 : 6; 
-
-        return RPSComparerWithCode(selections) + roundResult;
-    }
-
-    private static int GetGameResultPointsWithoutCode(char[] selections)
-    {
-        int pointsForSelection = selections[1] - 'W';
-
-        return pointsForSelection + RPSComparerWithoutCode(selections);
-    }
-
-    private static int RPSComparerWithCode(char[] selections)
-    {
-        int points = 0;
-
-        switch(selections[0])
+    private static int GetGameResultPointsWithCode(char[] selections) =>
+        selections switch
         {
-            case 'A':
-                points = selections[1] == 'X' ? 3 :
-                    selections[1] == 'Y' ? 1 : 2;
-                break;
-            case 'B':
-                points = selections[1] == 'X' ? 1 :
-                    selections[1] == 'Y' ? 2 : 3;
-                break;
-            case 'C':
-                points = selections[1] == 'X' ? 2 :
-                    selections[1] == 'Y' ? 3 : 1;
-                break;
-            default:
-                break;
-        }
+            [_, 'X'] => RPSComparerWithCode(selections) + 0,
+            [_, 'Y'] => RPSComparerWithCode(selections) + 3,
+            [_, 'Z'] => RPSComparerWithCode(selections) + 6,
+            _ => 0
+        };
 
-        return points;
-    }
+    private static int GetGameResultPointsWithoutCode(char[] selections) =>
+        (selections[1] - 'W') + RPSComparerWithoutCode(selections);
+    
 
-    private static int RPSComparerWithoutCode(char[] selections)
-    {
-        int points = 0;
-
-        switch(selections[0])
+    private static int RPSComparerWithCode(char[] selections) =>
+        selections switch
         {
-            case 'A':
-                points = selections[1] == 'X' ? 3 :
-                    selections[1] == 'Y' ? 6 : 0;
-                break;
-            case 'B':
-                points = selections[1] == 'X' ? 0 :
-                    selections[1] == 'Y' ? 3 : 6;
-                break;
-            case 'C':
-                points = selections[1] == 'X' ? 6 :
-                    selections[1] == 'Y' ? 0 : 3;
-                break;
-            default:
-                break;
-        }
+            ['A', 'Y'] or ['B', 'X'] or ['C', 'Z'] => 1,
+            ['A', 'Z'] or ['B', 'Y'] or ['C', 'X'] => 2,
+            ['A', 'X'] or ['B', 'Z'] or ['C', 'Y'] => 3,
+            _ => 0
+        };
 
-        return points;
-    }
+    private static int RPSComparerWithoutCode(char[] selections) =>
+        selections switch
+        {
+            ['A', 'Z'] or ['B', 'X'] or ['C', 'Y'] => 0,
+            ['A', 'X'] or ['B', 'Y'] or ['C', 'Z'] => 3,
+            ['A', 'Y'] or ['B', 'Z'] or ['C', 'X'] => 6,
+            _ => 0
+        };
 
     private static IEnumerable<char[]> ImportData(StreamReader stream)
     {
