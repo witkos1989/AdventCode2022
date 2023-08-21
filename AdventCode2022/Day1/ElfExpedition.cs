@@ -52,7 +52,7 @@ public sealed class ElfExpedition
 		}	
 	}
 
-	private static IEnumerable<List<int>> ImportData(StreamReader file)
+	private static IEnumerable<List<int>> ImportData(StreamReader stream)
 	{
 		bool endOfFile = false;
 
@@ -62,13 +62,13 @@ public sealed class ElfExpedition
 
 			for (; ; )
 			{
-				string? caloriesString = file.ReadLine();
+                if (stream.EndOfStream)
+                    endOfFile = true;
+
+                string? caloriesString = stream.ReadLine();
 
 				if (string.IsNullOrEmpty(caloriesString))
 					break;
-
-				if (file.EndOfStream)
-					endOfFile = true;
 
 				int calories = Convert.ToInt32(caloriesString);
 
