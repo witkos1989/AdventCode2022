@@ -1,10 +1,10 @@
 ﻿namespace AdventCode2022.Day2;
 
-public sealed class RockPaperScissorsGame
+public sealed class RockPaperScissors
 {
     private readonly List<char[]> _data = new();
 
-    public RockPaperScissorsGame()
+    public RockPaperScissors()
     {
         string currentDirectory = Path.GetDirectoryName(
             Path.GetDirectoryName(

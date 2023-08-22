@@ -1,10 +1,10 @@
 ﻿namespace AdventCode2022.Day1;
 
-public sealed class ElfExpedition
+public sealed class CalorieCounting
 {
 	private readonly List<List<int>> _data = new();
 
-	public ElfExpedition()
+	public CalorieCounting()
 	{
 		string currentDirectory = Path.GetDirectoryName(
 		Path.GetDirectoryName(
