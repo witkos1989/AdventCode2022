@@ -6,7 +6,7 @@ public sealed class RockPaperScissors
 
     public RockPaperScissors()
     {
-        string currentDirectory = Helpers.Helpers.
+        string currentDirectory = PathHelper.
             GetCurrentDirectory("Day2", "RockPaperScissorsGamePlan.txt");
         StreamReader file = new(currentDirectory);
         IEnumerable<string?> rawData = file.ImportData();

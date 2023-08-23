@@ -6,7 +6,7 @@ public sealed class RucksackReorganization
 
     public RucksackReorganization()
 	{
-        string currentDirectory = Helpers.Helpers.
+        string currentDirectory = PathHelper.
             GetCurrentDirectory("Day3", "BackpackSupplies.txt");
         StreamReader file = new(currentDirectory);
 

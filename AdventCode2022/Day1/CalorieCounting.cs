@@ -6,7 +6,7 @@ public sealed class CalorieCounting
 
 	public CalorieCounting()
 	{
-        string currentDirectory = Helpers.Helpers.
+        string currentDirectory = PathHelper.
 			GetCurrentDirectory("Day1", "FoodCaloriesDistribution.txt");
 		StreamReader file = new(currentDirectory);
         IEnumerable<string?> rawData = file.ImportData();

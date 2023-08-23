@@ -1,6 +1,7 @@
 ﻿using AdventCode2022.Day1;
 using AdventCode2022.Day2;
 using AdventCode2022.Day3;
+using AdventCode2022.Day4;
 
 CalorieCounting elfExpedition = new();
 
@@ -29,6 +30,16 @@ results = reorganization.Solutions();
 Console.WriteLine(
     "Day 3 results: Sum of product priorities found in both compartments in backpack = {0}; " +
     "Sum of product priorities found in each three-Elf group = {1}",
+    results[0],
+    results[1]);
+
+CampCleanup campCleanup = new();
+
+results = campCleanup.Solutions();
+
+Console.WriteLine(
+    "Day 4 results: Assignments that fully covers one another = {0}; " +
+    "Assignments that overlaps one another = {1}",
     results[0],
     results[1]);
 

@@ -1,6 +1,6 @@
 ﻿namespace AdventCode2022.Helpers;
 
-public static class Helpers
+public static class PathHelper
 {
     public static string GetCurrentDirectory(string directoryName, string fileName)
     {
