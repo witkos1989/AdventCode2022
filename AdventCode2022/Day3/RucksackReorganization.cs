@@ -6,14 +6,11 @@ public sealed class RucksackReorganization
 
     public RucksackReorganization()
 	{
-        string currentDirectory = Path.GetDirectoryName(
-            Path.GetDirectoryName(
-                Path.GetDirectoryName(
-                    Directory.GetCurrentDirectory())))!;
-        string archiveFolder = Path.Combine(currentDirectory, "Day3");
-        StreamReader file = new(archiveFolder + "/BackpackSupplies.txt");
+        string currentDirectory = Helpers.Helpers.
+            GetCurrentDirectory("Day3", "BackpackSupplies.txt");
+        StreamReader file = new(currentDirectory);
 
-        _data = ImportData(file).ToList();
+        _data = file.ImportData().ToList()!;
     }
 
     public int[] Solutions()
@@ -101,22 +98,6 @@ public sealed class RucksackReorganization
             products[1] = line.Substring((int)(line.Length / 2), (int)(line.Length / 2));
 
             yield return products;
-        }
-    }
-
-    private static IEnumerable<string> ImportData(StreamReader stream)
-    {
-        for (; ; )
-        {
-            if (stream.EndOfStream)
-                break;
-
-            string? line = stream.ReadLine();
-
-            if (string.IsNullOrEmpty(line))
-                continue;
-
-            yield return line;
         }
     }
 }

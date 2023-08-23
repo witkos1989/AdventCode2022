@@ -6,14 +6,12 @@ public sealed class CalorieCounting
 
 	public CalorieCounting()
 	{
-		string currentDirectory = Path.GetDirectoryName(
-		Path.GetDirectoryName(
-			Path.GetDirectoryName(
-				Directory.GetCurrentDirectory())))!;
-		string archiveFolder = Path.Combine(currentDirectory, "Day1");
-		StreamReader file = new(archiveFolder + "/FoodCaloriesDistribution.txt");
+        string currentDirectory = Helpers.Helpers.
+			GetCurrentDirectory("Day1", "FoodCaloriesDistribution.txt");
+		StreamReader file = new(currentDirectory);
+        IEnumerable<string?> rawData = file.ImportData();
 
-		_data = ImportData(file).ToList();
+        _data = ProcessData(rawData).ToList();
 	}
 
 	public int[] Solutions()
@@ -43,30 +41,22 @@ public sealed class CalorieCounting
 		}	
 	}
 
-	private static IEnumerable<List<int>> ImportData(StreamReader stream)
+	private static IEnumerable<List<int>> ProcessData(IEnumerable<string?> data)
 	{
-		bool endOfFile = false;
+        List<int> elfInventory = new();
 
-		while (!endOfFile)
+        foreach (string? line in data)
 		{
-			List<int> elfInventory = new();
-
-			for (; ; )
+			if (string.IsNullOrEmpty(line))
 			{
-                if (stream.EndOfStream)
-                    endOfFile = true;
-
-                string? caloriesString = stream.ReadLine();
-
-				if (string.IsNullOrEmpty(caloriesString))
-					break;
-
-				int calories = Convert.ToInt32(caloriesString);
-
-				elfInventory.Add(calories);
+				yield return elfInventory;
+				elfInventory = new();
+				continue;
 			}
 
-			yield return elfInventory;
-		}
+            int calories = Convert.ToInt32(line);
+
+			elfInventory.Add(calories);
+        }
 	}
 }

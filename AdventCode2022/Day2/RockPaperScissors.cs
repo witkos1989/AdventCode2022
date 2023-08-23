@@ -6,14 +6,12 @@ public sealed class RockPaperScissors
 
     public RockPaperScissors()
     {
-        string currentDirectory = Path.GetDirectoryName(
-            Path.GetDirectoryName(
-                Path.GetDirectoryName(
-                    Directory.GetCurrentDirectory())))!;
-        string archiveFolder = Path.Combine(currentDirectory, "Day2");
-        StreamReader file = new(archiveFolder + "/RockPaperScissorsGamePlan.txt");
+        string currentDirectory = Helpers.Helpers.
+            GetCurrentDirectory("Day2", "RockPaperScissorsGamePlan.txt");
+        StreamReader file = new(currentDirectory);
+        IEnumerable<string?> rawData = file.ImportData();
 
-        _data = ImportData(file).ToList();
+        _data = ProcessData(rawData).ToList();
     }
 
     public int[] Solutions()
@@ -82,15 +80,10 @@ public sealed class RockPaperScissors
             _ => 0
         };
 
-    private static IEnumerable<char[]> ImportData(StreamReader stream)
+    private static IEnumerable<char[]> ProcessData(IEnumerable<string?> data)
     {
-        for (; ; )
+        foreach (string? line in data)
         {
-            if (stream.EndOfStream)
-                break;
-
-            string? line = stream.ReadLine();
-
             if (string.IsNullOrEmpty(line))
                 continue;
 
