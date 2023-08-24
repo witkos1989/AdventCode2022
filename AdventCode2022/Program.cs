@@ -2,6 +2,7 @@
 using AdventCode2022.Day2;
 using AdventCode2022.Day3;
 using AdventCode2022.Day4;
+using AdventCode2022.Day5;
 
 CalorieCounting elfExpedition = new();
 
@@ -42,5 +43,15 @@ Console.WriteLine(
     "Assignments that overlaps one another = {1}",
     results[0],
     results[1]);
+
+SupplyStacks supplyStacks = new();
+
+string[] supplyResults = supplyStacks.Solutions();
+
+Console.WriteLine(
+    "Day 5 results: Crates on top of each stack after rearrangement = {0}; " +
+    "Crates on top of each stack after rearrangement using new crane = {1}",
+    supplyResults[0],
+    supplyResults[1]);
 
 Console.ReadKey();
