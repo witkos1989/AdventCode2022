@@ -4,6 +4,7 @@ using AdventCode2022.Day3;
 using AdventCode2022.Day4;
 using AdventCode2022.Day5;
 using AdventCode2022.Day6;
+using AdventCode2022.Day7;
 
 CalorieCounting elfExpedition = new();
 
@@ -64,5 +65,7 @@ Console.WriteLine(
     "Start-of-message marker found after {1} characters",
     results[0],
     results[1]);
+
+NoSpaceLeft noSpaceLeft = new();
 
 Console.ReadKey();
