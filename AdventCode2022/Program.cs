@@ -3,6 +3,7 @@ using AdventCode2022.Day2;
 using AdventCode2022.Day3;
 using AdventCode2022.Day4;
 using AdventCode2022.Day5;
+using AdventCode2022.Day6;
 
 CalorieCounting elfExpedition = new();
 
@@ -53,5 +54,15 @@ Console.WriteLine(
     "Crates on top of each stack after rearrangement using new crane = {1}",
     supplyResults[0],
     supplyResults[1]);
+
+TuningTrouble tuningTrouble = new();
+
+results = tuningTrouble.Solutions();
+
+Console.WriteLine(
+    "Day 6 results: Start-of-packet marker found after {0} characters; " +
+    "Start-of-message marker found after {1} characters",
+    results[0],
+    results[1]);
 
 Console.ReadKey();

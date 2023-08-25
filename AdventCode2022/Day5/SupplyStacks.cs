@@ -3,10 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace AdventCode2022.Day5;
 
-public partial class SupplyStacks
+public sealed partial class SupplyStacks
 {
 	private IEnumerable<Stack<char>>? _firstStacks;
-    private IEnumerable<Stack<char>>? _secondStacks;
+    private IEnumerable<List<char>>? _secondStacks;
     private IEnumerable<int[]>? _instructions;
 
 	public SupplyStacks()
@@ -21,74 +21,39 @@ public partial class SupplyStacks
 
     public string[] Solutions()
     {
-        string[] results = new string[2];
-
-        results[0] = TopCratesUsingStacks();
-
-        results[1] = TopCratesUsingLists();
-
-        return results;
+        return TopCratesFromStacksAndLists();
     }
 
-    private string TopCratesUsingLists()
+    private string[] TopCratesFromStacksAndLists()
     {
-        StringBuilder builder = new();
+        StringBuilder stacks = new();
+        StringBuilder lists = new();
+        string[] stackAndListResult = new string[2];
 
-        List<char>[] results = NewRearrangement();
+        (Stack<char>[], List<char>[]) results = Rearrangement();
 
-        foreach (List<char> result in results)
+        foreach (Stack<char> result in results.Item1)
         {
-            builder.Append(result[0]);
+            stacks.Append(result.Peek());
         }
 
-        return builder.ToString();
+        foreach (List<char> result in results.Item2)
+        {
+            lists.Append(result[0]);
+        }
+
+        (stackAndListResult[0], stackAndListResult[1]) = (stacks.ToString(), lists.ToString());
+
+        return stackAndListResult;
     }
 
-    private string TopCratesUsingStacks()
-    {
-        StringBuilder builder = new();
-
-        Stack<char>[] results = Rearrangement();
-
-        foreach (Stack<char> result in results)
-        {
-            builder.Append(result.Peek());
-        }
-
-        return builder.ToString();
-    }
-
-    private List<char>[] NewRearrangement()
-    {
-        if (_secondStacks is null && _instructions is null)
-            return Array.Empty<List<char>>();
-
-        Stack<char>[] stackArray = _secondStacks!.ToArray();
-        List<char>[] stacks = new List<char>[stackArray.Length];
-
-        for (int i = 0; i < stackArray.Length; i++)
-        {
-            stacks[i] = stackArray[i].ToList();
-        }
-
-        foreach (int[] move in _instructions!)
-        {
-            char[] crates = stacks[move[1] - 1].Take(move[0]).ToArray();
-
-            stacks[move[1] - 1].RemoveRange(0, move[0]);
-
-            stacks[move[2] - 1].InsertRange(0, crates);
-        }
-
-        return stacks;
-    }
-
-    private Stack<char>[] Rearrangement()
+    private (Stack<char>[], List<char>[]) Rearrangement()
     {
         if (_firstStacks is null && _instructions is null)
-            return Array.Empty<Stack<char>>();
+            return (Array.Empty<Stack<char>>(), Array.Empty<List<char>>());
 
         Stack<char>[] stacks = _firstStacks!.ToArray();
+        List<char>[] lists = _secondStacks!.ToArray();
 
         foreach (int[] move in _instructions!)
         {
@@ -98,9 +63,15 @@ public partial class SupplyStacks
 
                 stacks[move[2] - 1].Push(crate);
             }
+
+            char[] crates = lists[move[1] - 1].Take(move[0]).ToArray();
+
+            lists[move[1] - 1].RemoveRange(0, move[0]);
+
+            lists[move[2] - 1].InsertRange(0, crates);
         }
 
-        return stacks;
+        return (stacks, lists);
     }
 
     private void ProcessData(IEnumerable<string?> data)
@@ -125,11 +96,42 @@ public partial class SupplyStacks
 
         crates.Reverse();
 
-        _firstStacks = PutCratesOnStacks(crates, numOfStacks);
-
-        _secondStacks = PutCratesOnStacks(crates, numOfStacks);
+        PutCratesOnStacks(crates, numOfStacks);
 
         _instructions = AddInscrutions(data);
+    }
+
+    private void PutCratesOnStacks(List<string> input, int numOfStacks)
+    {
+        Stack<char>[] supplyStacks = new Stack<char>[numOfStacks];
+        List<char>[] supplyLists = new List<char>[numOfStacks];
+
+        foreach (var line in input)
+        {
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (char.IsLetter(line[i]) && char.IsUpper(line[i]))
+                {
+                    int index = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(i / 4)));
+
+                    if (supplyStacks[index] is null)
+                        supplyStacks[index] = new();
+
+                    if (supplyLists[index] is null)
+                        supplyLists[index] = new();
+
+                    supplyStacks[index].Push(line[i]);
+                    supplyLists[index].Add(line[i]);
+                }
+            }
+        }
+
+        foreach (var list in supplyLists)
+        {
+            list.Reverse();
+        }
+
+        (_firstStacks, _secondStacks) = (supplyStacks, supplyLists);
     }
 
     private static IEnumerable<int[]> AddInscrutions(IEnumerable<string?> data)
@@ -155,29 +157,6 @@ public partial class SupplyStacks
 
             yield return instructions.ToArray();
         }
-    }
-
-    private static Stack<char>[] PutCratesOnStacks(List<string> input, int numOfStacks)
-    {
-        Stack<char>[] supplyStacks = new Stack<char>[numOfStacks];
-
-        foreach (var line in input)
-        {
-            for (int i = 0; i < line.Length; i++)
-            {
-                if (char.IsLetter(line[i]) && char.IsUpper(line[i]))
-                {
-                    int index = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(i / 4)));
-
-                    if (supplyStacks[index] is null)
-                        supplyStacks[index] = new();
-
-                    supplyStacks[index].Push(line[i]);
-                }
-            }
-        }
-
-        return supplyStacks;
     }
 
     private static int DefineNoOfStacks(string line)
