@@ -68,4 +68,12 @@ Console.WriteLine(
 
 NoSpaceLeft noSpaceLeft = new();
 
+results = noSpaceLeft.ShowResult();
+
+Console.WriteLine(
+    "Day 7 results: Total size of directories with size under 100000 = {0}; " +
+    "Smallest directory size that needs to be deleted to free enough memory = {1}",
+    results[0],
+    results[1]);
+
 Console.ReadKey();

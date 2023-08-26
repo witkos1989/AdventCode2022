@@ -4,8 +4,8 @@ public sealed class NoSpaceLeft
 {
     private readonly TreeNode _data;
 
-	public NoSpaceLeft()
-	{
+    public NoSpaceLeft()
+    {
         string currentDirectory = PathHelper.
             GetCurrentDirectory("Day7", "NoSpaceLeftInput.txt");
         StreamReader file = new(currentDirectory);
@@ -14,6 +14,69 @@ public sealed class NoSpaceLeft
         _data = new TreeNode("/", true);
 
         ProcessData(rawData.ToArray()!, _data);
+    }
+
+    public int[] ShowResult()
+    {
+        int[] results = new int[2];
+
+        results[0] = CountDirectioriesSize(_data);
+
+        results[1] = FindSmallestDirectoryToSaveEnoughSpace(_data);
+
+        return results;
+    }
+
+    private static int FindSmallestDirectoryToSaveEnoughSpace(TreeNode parent)
+    {
+        int overallSize = (int)parent.Size!;
+        int smallestDirectory = overallSize;
+
+        smallestDirectory = FindSmallestRecursion(parent, (int)parent.Size, smallestDirectory);
+
+        return smallestDirectory;
+    }
+
+    private static int FindSmallestRecursion(TreeNode parent, int overallSize, int smallestSize)
+    {
+        TreeNode[] children = parent.Children.Where(c => c.IsDirectory).ToArray();
+
+        foreach (TreeNode child in children)
+        {
+            int substractionSize = overallSize - (int)child.Size!;
+
+            if (substractionSize < 40000000 && smallestSize > (int)child.Size!)
+            {
+                smallestSize = (int)child.Size;
+
+                int checkSizeOfChildren = FindSmallestRecursion(child, overallSize, (int)child.Size!);
+
+                if (checkSizeOfChildren < smallestSize)
+                {
+                    smallestSize = checkSizeOfChildren;
+                }
+            }
+        }
+
+        return smallestSize;
+    }
+
+    private static int CountDirectioriesSize(TreeNode parent)
+    {
+        int sum = 0;
+
+        foreach (TreeNode child in parent.Children)
+        {
+            if (child.IsDirectory)
+            {
+                if (child.Size <= 100000)
+                    sum += (int)child.Size;
+
+                sum += CountDirectioriesSize(child);
+            }
+        }
+
+        return sum;
     }
 
     private static void ProcessData(string[] data, TreeNode parent)
@@ -37,10 +100,13 @@ public sealed class NoSpaceLeft
                         AddChildren(line, node, false);
                     break;
                 case { } when char.IsDigit(line[0]):
-                    AddChildren(line, node, true);
+                    if (isListingOn)
+                        AddChildren(line, node, true);
                     break;
             };
         }
+
+        parent.CountSize();
     }
 
     private static void AddChildren(string line, TreeNode parent, bool isFile)
@@ -58,11 +124,8 @@ public sealed class NoSpaceLeft
     {
         string nodeName = line["$ cd ".Length..];
 
-        if (node.Name.Equals(nodeName))
-            return node;
-
         if (nodeName.Equals(".."))
-            return node.Parent is null ? node : node.Parent;
+            return node.Parent!;
 
         TreeNode? newNode = node.Contains(nodeName);
 
@@ -77,7 +140,7 @@ public sealed class NoSpaceLeft
     private record TreeNode
     {
         public string Name { get; }
-        public int? Size { get; }
+        public int? Size { get; private set; }
         public bool IsDirectory { get; }
         public List<TreeNode> Children { get; }
         public TreeNode? Parent { get; }
@@ -98,9 +161,6 @@ public sealed class NoSpaceLeft
         {
             int sum = 0;
 
-            if (!IsDirectory)
-                return (int)(Size is null ? 0 : Size);
-
             foreach (TreeNode child in Children)
             {
                 if (child.IsDirectory)
@@ -109,16 +169,18 @@ public sealed class NoSpaceLeft
                 }
                 else
                 {
-                    sum += (int)(Size is null ? 0 : Size);
+                    sum += (int)(child.Size is null ? 0 : child.Size);
                 }
             }
+
+            Size = sum;
 
             return sum;
         }
 
         public TreeNode? Contains(string name)
         {
-            TreeNode? node = Children.FirstOrDefault(c => c.Name.Equals(name));
+            TreeNode? node = Children.LastOrDefault(c => c.Name.Equals(name));
 
             if (node is null)
             {
