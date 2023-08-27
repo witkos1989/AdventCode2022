@@ -5,6 +5,7 @@ using AdventCode2022.Day4;
 using AdventCode2022.Day5;
 using AdventCode2022.Day6;
 using AdventCode2022.Day7;
+using AdventCode2022.Day8;
 
 CalorieCounting elfExpedition = new();
 
@@ -73,6 +74,16 @@ results = noSpaceLeft.ShowResult();
 Console.WriteLine(
     "Day 7 results: Total size of directories with size under 100000 = {0}; " +
     "Smallest directory size that needs to be deleted to free enough memory = {1}",
+    results[0],
+    results[1]);
+
+TreetopTreeHouse treetopTreeHouse = new();
+
+results = treetopTreeHouse.Results();
+
+Console.WriteLine(
+    "Day 8 results: Tree coverage in the forest = {0}; " +
+    "Tree with highest scenic score = {1}",
     results[0],
     results[1]);
 
