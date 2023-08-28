@@ -6,6 +6,7 @@ using AdventCode2022.Day5;
 using AdventCode2022.Day6;
 using AdventCode2022.Day7;
 using AdventCode2022.Day8;
+using AdventCode2022.Day9;
 
 CalorieCounting elfExpedition = new();
 
@@ -86,5 +87,13 @@ Console.WriteLine(
     "Tree with highest scenic score = {1}",
     results[0],
     results[1]);
+
+RopeBridge ropeBridge = new();
+
+results = ropeBridge.Results();
+
+Console.WriteLine(
+    "Day 9 results: Positions visited by the tail at least once = {0};",
+    results[0]);
 
 Console.ReadKey();

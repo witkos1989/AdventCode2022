@@ -17,6 +17,7 @@
     <None Remove="Day6\" />
     <None Remove="Day7\" />
     <None Remove="Day8\" />
+    <None Remove="Day9\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Day2\" />
@@ -28,5 +29,6 @@
     <Folder Include="Day6\" />
     <Folder Include="Day7\" />
     <Folder Include="Day8\" />
+    <Folder Include="Day9\" />
   </ItemGroup>
 </Project>
