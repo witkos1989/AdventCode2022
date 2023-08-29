@@ -69,8 +69,6 @@ public class RopeBridge
         {
             for (int i = 0; i < step.Item2; i++)
             {
-                int[] previousPosition = new int[2] { knots[0, 0], knots[0, 1] };
-
                 switch (step.Item1)
                 {
                     case 'l':
@@ -89,12 +87,12 @@ public class RopeBridge
                         break;
                 }
 
-                UpdateKnotsPosition(knots, previousPosition, noOfKnots);
+                UpdateKnotsPosition(knots, noOfKnots);
             }       
         }
     }
 
-    private void UpdateKnotsPosition(int[,] knots, int[] previousPosition, int noOfKnots)
+    private void UpdateKnotsPosition(int[,] knots, int noOfKnots)
     {
         int[] head = new int[2] { knots[0, 0], knots[0, 1] };
 
@@ -103,10 +101,15 @@ public class RopeBridge
             int[] tail = new int[2] { knots[i, 0], knots[i, 1] };
 
             if (!IsTailNextToHead(head, tail))
-            { 
-                (knots[i, 0], knots[i, 1]) = (previousPosition[0], previousPosition[1]);
+            {
+                int moveX = tail[0] == head[0] ? 0 :
+                    (head[0] - tail[0]) / Math.Abs(head[0] - tail[0]);
+                int moveY = tail[1] == head[1] ? 0 :
+                    (head[1] - tail[1]) / Math.Abs(head[1] - tail[1]);
 
-                previousPosition = new int[2] { tail[0], tail[1] };
+                knots[i, 0] += moveX;
+
+                knots[i, 1] += moveY;
 
                 if (i == noOfKnots - 1)
                 {
