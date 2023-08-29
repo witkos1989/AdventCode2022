@@ -3,7 +3,7 @@
 public class RopeBridge
 {
     private readonly (char, int)[] _data;
-    private bool[][] _board;
+    private bool[][]? _board;
 
 	public RopeBridge()
 	{
@@ -14,6 +14,24 @@ public class RopeBridge
 
         _data = ProcessData(rawData!).ToArray();
 
+        InitBoard();
+    }
+
+    public int[] Results()
+    {
+        int[] results = new int[2];
+
+        results[0] = CountPath(_board!, 2);
+
+        InitBoard();
+
+        results[1] = CountPath(_board!, 10);
+
+        return results;
+    }
+
+    private void InitBoard()
+    {
         _board = new bool[400][];
 
         for (int i = 0; i < _board.Length; i++)
@@ -22,18 +40,9 @@ public class RopeBridge
         }
     }
 
-    public int[] Results()
+    private int CountPath(bool[][] board, int knotsNumber)
     {
-        int[] results = new int[2];
-
-        results[0] = CountPath(_board);
-
-        return results;
-    }
-
-    private int CountPath(bool[][] board)
-    {
-        StartSimulation(_data);
+        StartSimulation(_data, knotsNumber);
 
         int sum = 0;
         foreach (bool[] line in board)
@@ -44,49 +53,68 @@ public class RopeBridge
         return sum;
     }
 
-    private void StartSimulation((char, int)[] steps)
+    private void StartSimulation((char, int)[] steps, int noOfKnots)
     {
-        int[] head = new int[2] { _board.Length / 2, _board.Length / 2 };
-        int[] tail = new int[2] { _board.Length / 2, _board.Length / 2 };
+        int[,] knots = new int[noOfKnots, 2];
 
-        _board[tail[0]][tail[1]] = true;
+        for (int i = 0; i < noOfKnots; i++)
+        {
+            knots[i, 0] = _board!.Length / 2;
+            knots[i, 1] = _board!.Length / 2;
+        }
+
+        _board![knots[0, 0]][knots[0, 1]] = true;
 
         foreach ((char, int) step in steps)
         {
             for (int i = 0; i < step.Item2; i++)
             {
-                int[] previousPosition = new int[2] { head[0], head[1] };
+                int[] previousPosition = new int[2] { knots[0, 0], knots[0, 1] };
 
                 switch (step.Item1)
                 {
-                    case 'l':                     
-                        head[0] -= 1;
+                    case 'l':
+                        knots[0, 0] -= 1;
                         break;
                     case 'r':
-                        head[0] += 1;
+                        knots[0, 0] += 1;
                         break;
                     case 'u':
-                        head[1] += 1;
+                        knots[0, 1] += 1;
                         break;
                     case 'd':
-                        head[1] -= 1;
+                        knots[0, 1] -= 1;
                         break;
                     default:
                         break;
                 }
 
-                UpdateTailPosition(head, tail, previousPosition);
+                UpdateKnotsPosition(knots, previousPosition, noOfKnots);
             }       
         }
     }
 
-    private void UpdateTailPosition(int[] head, int[] tail, int[] previousPosition)
+    private void UpdateKnotsPosition(int[,] knots, int[] previousPosition, int noOfKnots)
     {
-        if (!IsTailNextToHead(head, tail))
-        {
-            (tail[0], tail[1]) = (previousPosition[0], previousPosition[1]);
+        int[] head = new int[2] { knots[0, 0], knots[0, 1] };
 
-            _board[tail[0]][tail[1]] = true;
+        for (int i = 1; i < noOfKnots; i++)
+        {
+            int[] tail = new int[2] { knots[i, 0], knots[i, 1] };
+
+            if (!IsTailNextToHead(head, tail))
+            { 
+                (knots[i, 0], knots[i, 1]) = (previousPosition[0], previousPosition[1]);
+
+                previousPosition = new int[2] { tail[0], tail[1] };
+
+                if (i == noOfKnots - 1)
+                {
+                    _board![knots[i, 0]][knots[i, 1]] = true;
+                }
+            }
+
+            head = new int[2] { knots[i, 0], knots[i, 1] };
         }
     }
 
@@ -95,10 +123,7 @@ public class RopeBridge
         int xDifference = Math.Abs(tailPosition[0] - headPosition[0]);
         int yDifference = Math.Abs(tailPosition[1] - headPosition[1]);
 
-        if (xDifference > 1 || yDifference > 1)
-            return false;
-
-        return true;
+        return !(xDifference > 1 || yDifference > 1);
     }
 
     private static IEnumerable<(char, int)> ProcessData(IEnumerable<string> input)

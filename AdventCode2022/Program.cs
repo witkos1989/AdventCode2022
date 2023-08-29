@@ -93,7 +93,9 @@ RopeBridge ropeBridge = new();
 results = ropeBridge.Results();
 
 Console.WriteLine(
-    "Day 9 results: Positions visited by the tail at least once = {0};",
-    results[0]);
+    "Day 9 results: Positions visited by the tail at least once with two knots = {0}; " +
+    "Positions visited by the tail at least once with ten knots = {1}",
+    results[0],
+    results[1]);
 
 Console.ReadKey();
