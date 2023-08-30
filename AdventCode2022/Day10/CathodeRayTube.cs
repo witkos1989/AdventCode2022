@@ -3,6 +3,7 @@
 public class CathodeRayTube
 {
     private readonly IEnumerable<(string, int?)> _data;
+    private readonly char[,] _crtScreen;
 
 	public CathodeRayTube()
 	{
@@ -12,18 +13,34 @@ public class CathodeRayTube
         IEnumerable<string?> rawData = file.ImportData();
 
         _data = ProcessData(rawData!);
+        _crtScreen = new char[40,6];
     }
 
-    public int[] Results()
+    public int Result()
     {
-        int[] results = new int[2];
-
-        results[0] = CalculateSignals(_data.ToArray());
-
-        return results;
+        return CalculateSignals(_data.ToArray());
     }
 
-    private static int CalculateSignals((string, int?)[] instructions)
+    public void GenerateResultOnScreen()
+    {
+        Console.WriteLine("Result shown on the screen according to signal:");
+
+        for (int i = 0; i < _crtScreen.Length; i++)
+        {
+            int column = i % 40;
+            int row = (int)Math.Floor((decimal)(i / 40));
+
+            if (i > 1 && column == 0)
+            {
+                Console.WriteLine();
+            }
+
+            Console.Write(_crtScreen[column, row]);
+        }
+        Console.WriteLine();
+    }
+
+    private int CalculateSignals((string, int?)[] instructions)
     {
         int signalStrength = 0;
         int steps = 0;
@@ -47,17 +64,51 @@ public class CathodeRayTube
         return signalStrength;
     }
 
-    private static int AddCycles(int steps, int register, ref int signalStrength)
+    private int AddCycles(int steps, int register, ref int signalStrength)
     {
+        DrawOnCrt(steps, register);
+
         steps += 1;
 
-        if (steps % 40 == 0 + 20 || steps == 20)
+        if (steps % 40 == 0 + 20)
         {
             signalStrength += steps * register;
         }
 
         return steps;
     }
+
+    private void DrawOnCrt(int steps, int register)
+    {
+        int column = steps % 40;
+        int row = (int)Math.Floor((decimal)(steps / 40));
+        int[] registerFields = GenerateSignalFields(register);
+        bool drawSpriteOnScreen = CheckSpritePosition(registerFields, column);
+
+        _crtScreen[column, row] = drawSpriteOnScreen ? '#' : '.';
+    }
+
+    private static bool CheckSpritePosition(int[] fields, int column)
+    {
+        foreach (int field in fields)
+        {
+            if (field == column)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static int[] GenerateSignalFields(int register) => register switch
+        {
+            -1 => new int[1] { register + 1 },
+            0 => new int[2] { register, register + 1 },
+            39 => new int[2] { register - 1, register },
+            40 => new int[1] { register - 1 },
+            _ => new int[3] { register - 1, register, register + 1 },
+        };
 
     private static IEnumerable<(string, int?)> ProcessData(IEnumerable<string> data)
     {

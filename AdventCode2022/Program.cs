@@ -101,10 +101,11 @@ Console.WriteLine(
 
 CathodeRayTube cathodeRayTube = new();
 
-results = cathodeRayTube.Results();
+int signalStrength = cathodeRayTube.Result();
 
-Console.WriteLine(
-    "Day 10 results: Sum of six signal strengths = {0};",
-    results[0]);
+Console.Write("Day 10 results: Sum of six signal strengths = {0}; ",
+    signalStrength);
+
+cathodeRayTube.GenerateResultOnScreen();
 
 Console.ReadKey();
