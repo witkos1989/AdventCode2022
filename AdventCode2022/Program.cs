@@ -7,6 +7,7 @@ using AdventCode2022.Day6;
 using AdventCode2022.Day7;
 using AdventCode2022.Day8;
 using AdventCode2022.Day9;
+using AdventCode2022.Day10;
 
 CalorieCounting elfExpedition = new();
 
@@ -97,5 +98,13 @@ Console.WriteLine(
     "Positions visited by the tail at least once with ten knots = {1}",
     results[0],
     results[1]);
+
+CathodeRayTube cathodeRayTube = new();
+
+results = cathodeRayTube.Results();
+
+Console.WriteLine(
+    "Day 10 results: Sum of six signal strengths = {0};",
+    results[0]);
 
 Console.ReadKey();
