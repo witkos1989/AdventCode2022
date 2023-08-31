@@ -1,6 +1,6 @@
 ﻿namespace AdventCode2022.Day8;
 
-public class TreetopTreeHouse
+public sealed class TreetopTreeHouse
 {
     private readonly int[][] _data;
 

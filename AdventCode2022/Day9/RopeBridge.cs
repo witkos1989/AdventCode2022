@@ -1,6 +1,6 @@
 ﻿namespace AdventCode2022.Day9;
 
-public class RopeBridge
+public sealed class RopeBridge
 {
     private readonly (char, int)[] _data;
     private bool[][]? _board;

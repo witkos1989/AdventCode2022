@@ -1,6 +1,6 @@
 ﻿namespace AdventCode2022.Day10;
 
-public class CathodeRayTube
+public sealed class CathodeRayTube
 {
     private readonly IEnumerable<(string, int?)> _data;
     private readonly char[,] _crtScreen;

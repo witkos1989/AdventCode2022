@@ -8,6 +8,7 @@ using AdventCode2022.Day7;
 using AdventCode2022.Day8;
 using AdventCode2022.Day9;
 using AdventCode2022.Day10;
+using AdventCode2022.Day11;
 
 CalorieCounting elfExpedition = new();
 
@@ -107,5 +108,7 @@ Console.Write("Day 10 results: Sum of six signal strengths = {0}; ",
     signalStrength);
 
 cathodeRayTube.GenerateResultOnScreen();
+
+MonkeyInTheMiddle monkeyInTheMiddle = new();
 
 Console.ReadKey();
