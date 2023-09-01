@@ -111,4 +111,8 @@ cathodeRayTube.GenerateResultOnScreen();
 
 MonkeyInTheMiddle monkeyInTheMiddle = new();
 
+results = monkeyInTheMiddle.Results();
+
+Console.WriteLine(results[0]);
+
 Console.ReadKey();
