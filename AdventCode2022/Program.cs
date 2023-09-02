@@ -113,6 +113,7 @@ MonkeyInTheMiddle monkeyInTheMiddle = new();
 
 results = monkeyInTheMiddle.Results();
 
-Console.WriteLine(results[0]);
+Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
+    results[0]);
 
 Console.ReadKey();

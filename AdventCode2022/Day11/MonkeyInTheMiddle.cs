@@ -28,7 +28,7 @@ public sealed class MonkeyInTheMiddle
     {
         int[] monkeyInspections = new int[monkeys.Length];
 
-        for (int i = 0; i < 21; i++)
+        for (int i = 0; i < 20; i++)
         {
             foreach (Monkey monkey in monkeys)
             {
@@ -38,15 +38,13 @@ public sealed class MonkeyInTheMiddle
                 {
                     int itemInMonkeyHand = monkey.InspectAndCalculateWorryLevel();
 
-                    itemInMonkeyHand = monkey.GetBoredOfItem(itemInMonkeyHand);
-
-                    countItems = monkey.CountItems();
-
                     int throwTo = monkey.IsDivisible(itemInMonkeyHand) ?
                         monkey.ThrowToIfTrue :
                         monkey.ThrowToIfFalse;
 
                     monkey.ThrowItemToMonkey(monkeys[throwTo], itemInMonkeyHand);
+
+                    countItems = monkey.CountItems();
                 }
             }
         }
@@ -75,7 +73,7 @@ public sealed class MonkeyInTheMiddle
             {
                 case { } when line.Contains("Starting items:"):
                     items = new();
-                    items.AddRange(GetItems(line).ToList());
+                    items.AddRange(ParseItems(line).ToList());
                     break;
                 case { } when line.Contains("Operation:"):
                     (Func<int, int?, int>, int?) operationAndParamer =
@@ -105,7 +103,7 @@ public sealed class MonkeyInTheMiddle
         }
     }
 
-    private static IEnumerable<int> GetItems(string line)
+    private static IEnumerable<int> ParseItems(string line)
     {
         string[] items = line.Split(':')[1].Trim().Split(", ");
 
@@ -125,9 +123,6 @@ public sealed class MonkeyInTheMiddle
             { } when data.Item1 == '+' => data.Item2 is null ?
                                 ((x, y) => x + x) :
                                 ((x, y) => x + (int)y!),
-            { } when data.Item1 == '-' => data.Item2 is null ?
-                                ((x, y) => x - x) :
-                                ((x, y) => x - (int)y!),
             { } when data.Item1 == '*' => data.Item2 is null ?
                                 ((x, y) => x * x) :
                                 ((x, y) => x * (int)y!),
@@ -143,7 +138,7 @@ public sealed class MonkeyInTheMiddle
 
         string[] calculationItems = operation.Split(" ");
         char operand = Convert.ToChar(calculationItems.
-            First(c => c == "+" || c == "-" || c == "*"));
+            First(c => c == "+" || c == "*"));
         int? number = calculationItems.Last().Contains("old") ?
             null :
             Convert.ToInt32(calculationItems.Last());
@@ -190,9 +185,6 @@ public sealed class MonkeyInTheMiddle
         public int CountItems() =>
             Items.Count;
 
-        public List<int> GetItems() =>
-            Items;
-
         public int InspectAndCalculateWorryLevel()
         {
             NoOfInspections++;
@@ -201,11 +193,8 @@ public sealed class MonkeyInTheMiddle
 
             Items.Remove(item);
 
-            return Operation.Invoke(item, OperationParam);
+            return Operation.Invoke(item, OperationParam) / 3;
         }
-
-        public int GetBoredOfItem(int item) =>
-            (int)Math.Floor((double)(item / 3));
 
         public bool IsDivisible(int item) =>
             item % DivisibleBy == 0;
