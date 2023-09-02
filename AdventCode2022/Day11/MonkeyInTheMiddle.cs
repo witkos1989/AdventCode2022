@@ -2,7 +2,7 @@
 
 public sealed class MonkeyInTheMiddle
 {
-    private Monkey[] _monkeys;
+    private readonly Monkey[] _monkeys;
 
     public MonkeyInTheMiddle()
     {
@@ -28,7 +28,7 @@ public sealed class MonkeyInTheMiddle
     {
         int[] monkeyInspections = new int[monkeys.Length];
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 21; i++)
         {
             foreach (Monkey monkey in monkeys)
             {
@@ -64,7 +64,8 @@ public sealed class MonkeyInTheMiddle
     private static IEnumerable<Monkey> ProcessData(IEnumerable<string?> data)
     {
         List<int> items = new();
-        string operation = "";
+        Func<int, int?, int> operation = (x, y) => x;
+        int? operationParameter = null;
         int divideBy = 0;
         int ifTrue = 0;
 
@@ -77,7 +78,10 @@ public sealed class MonkeyInTheMiddle
                     items.AddRange(GetItems(line).ToList());
                     break;
                 case { } when line.Contains("Operation:"):
-                    operation = line.Split(':')[1].Trim().Split('=')[1].Trim();
+                    (Func<int, int?, int>, int?) operationAndParamer =
+                        GetOperationAndSecondParameter(line);
+                    operation = operationAndParamer.Item1;
+                    operationParameter = operationAndParamer.Item2;
                     break;
                 case { } when line.Contains("Test:"):
                     divideBy = ExtractNumber(line);
@@ -87,7 +91,13 @@ public sealed class MonkeyInTheMiddle
                     break;
                 case { } when line.Contains("If false:"):
                     int ifFalse = ExtractNumber(line);
-                    yield return new Monkey(items, operation, divideBy, ifTrue, ifFalse);
+                    yield return new Monkey(
+                        items,
+                        operation,
+                        operationParameter,
+                        divideBy,
+                        ifTrue,
+                        ifFalse);
                     break;
                default:
                     break;
@@ -105,6 +115,42 @@ public sealed class MonkeyInTheMiddle
         }
     }
 
+    private static (Func<int, int?, int>, int?)
+        GetOperationAndSecondParameter(string line)
+    {
+        (char, int?) data = GenerateOperationData(line);
+
+        Func<int, int?, int> monkeyOperation = data switch
+        {
+            { } when data.Item1 == '+' => data.Item2 is null ?
+                                ((x, y) => x + x) :
+                                ((x, y) => x + (int)y!),
+            { } when data.Item1 == '-' => data.Item2 is null ?
+                                ((x, y) => x - x) :
+                                ((x, y) => x - (int)y!),
+            { } when data.Item1 == '*' => data.Item2 is null ?
+                                ((x, y) => x * x) :
+                                ((x, y) => x * (int)y!),
+            _ => (x, y) => x,
+        };
+
+        return (monkeyOperation, data.Item2);
+    }
+
+    private static (char, int?) GenerateOperationData(string line)
+    {
+        string operation = line.Split(':')[1].Trim().Split('=')[1].Trim();
+
+        string[] calculationItems = operation.Split(" ");
+        char operand = Convert.ToChar(calculationItems.
+            First(c => c == "+" || c == "-" || c == "*"));
+        int? number = calculationItems.Last().Contains("old") ?
+            null :
+            Convert.ToInt32(calculationItems.Last());
+
+        return (operand, number);
+    }
+
     private static int ExtractNumber(string line) =>
         Convert.ToInt32(FindNumberInArrayOfStrings(SplitString(line)));
 
@@ -117,27 +163,24 @@ public sealed class MonkeyInTheMiddle
     private record Monkey
     {
         private readonly List<int> Items;
-        public string Operation { get; }
+        public Func<int, int?, int> Operation { get; }
+        public int? OperationParam { get; }
         public int DivisibleBy { get; } 
         public int ThrowToIfTrue { get; }
         public int ThrowToIfFalse { get; }
         public int NoOfInspections { get; private set; }
-        private readonly Dictionary<char, Func<int, int, int>> OperationResult = new()
-        {
-            { '+', (x, y) => x + y },
-            { '-', (x, y) => x - y },
-            { '*', (x, y) => x * y }
-        };
 
         public Monkey(
             List<int> items,
-            string operation,
+            Func<int, int?, int> operation,
+            int? operationParam,
             int divisibleBy,
             int throwToIfTrue,
             int throwToIfFalse)
         {
             Items = items;
             Operation = operation;
+            OperationParam = operationParam;
             DivisibleBy = divisibleBy;
             ThrowToIfTrue = throwToIfTrue;
             ThrowToIfFalse = throwToIfFalse;
@@ -155,12 +198,10 @@ public sealed class MonkeyInTheMiddle
             NoOfInspections++;
 
             int item = Items.First();
-            (int, char) calculations = CalculateOperationFromString(item);
 
             Items.Remove(item);
 
-            return OperationResult[calculations.Item2].
-                Invoke(item, calculations.Item1);
+            return Operation.Invoke(item, OperationParam);
         }
 
         public int GetBoredOfItem(int item) =>
@@ -171,18 +212,6 @@ public sealed class MonkeyInTheMiddle
 
         public void ThrowItemToMonkey(Monkey monkey, int item) =>
             monkey.AddItem(item);
-
-        private (int, char) CalculateOperationFromString(int item)
-        {
-            string[] calculationItems = Operation.Split(" ");
-            char operand = Convert.ToChar(calculationItems.
-                First(c => c == "+" || c == "-" || c == "*"));
-            int number = calculationItems.Last().Contains("old") ?
-                item :
-                Convert.ToInt32(calculationItems.Last());
-
-            return (number, operand);
-        }
 
         private void AddItem(int item) =>
             Items.Add(item);
