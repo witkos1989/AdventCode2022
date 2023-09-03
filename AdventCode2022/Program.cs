@@ -9,6 +9,7 @@ using AdventCode2022.Day8;
 using AdventCode2022.Day9;
 using AdventCode2022.Day10;
 using AdventCode2022.Day11;
+using AdventCode2022.Day12;
 
 CalorieCounting elfExpedition = new();
 
@@ -115,5 +116,7 @@ results = monkeyInTheMiddle.Results();
 
 Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
     results[0]);
+
+HillClimbing hillClimbing = new();
 
 Console.ReadKey();
