@@ -119,4 +119,9 @@ Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
 
 HillClimbing hillClimbing = new();
 
+results = hillClimbing.Results();
+
+Console.WriteLine("Day 12 results: Shortest path to get to the top position on the map = {0}",
+    results[0]);
+
 Console.ReadKey();
