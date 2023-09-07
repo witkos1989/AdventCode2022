@@ -4,6 +4,7 @@ public class HillClimbing
 {
     private readonly char[][] _data;
     private readonly (int[], int)[][][] _pathList;
+    private readonly int[][] _listOfA;
 
     public HillClimbing()
     {
@@ -15,35 +16,69 @@ public class HillClimbing
         _data = ProcessData(rawData!).ToArray();
 
         _pathList = GeneratePaths(_data).ToArray();
+
+        _listOfA = FindAllPositions(_data, 'a');
     }
 
     public int[] Results()
     {
         int[] results = new int[2];
 
-        results[0] = FindShortestPath(_data, _pathList);
+        results[0] = FindShortestPathFromStart(_data, _pathList);
+
+        results[1] = FindAnyShortestPathFromLowestPoint(_data, _pathList, _listOfA);
 
         return results;
     }
 
-    private static int FindShortestPath(
+    private static int FindShortestPathFromStart(
         char[][] map,
         (int[], int)[][][] pathList)
     {
         int[] start = FindPosition(map, 'S');
         int[] end = FindPosition(map, 'E');
-
-        int[][] path = DijkstraPath(
+        
+        int[][]? path = DijkstraPath(
             pathList,
             start,
             end,
             map.Length,
             map[0].Length);
 
-        return path.Length - 1;
+        return path is not null ? path.Length - 1 : int.MaxValue;
     }
 
-    private static int[][] DijkstraPath(
+    private static int FindAnyShortestPathFromLowestPoint(
+        char[][] map,
+        (int[], int)[][][] pathList,
+        int[][] listOfLowestPoints)
+    {
+        int[] end = FindPosition(map, 'E');
+        int shortestPath = int.MaxValue;
+
+        foreach (int[] lowestPoint in listOfLowestPoints)
+        {
+            bool canGoUp = pathList[lowestPoint[0]][lowestPoint[1]].
+                Any(p => map[p.Item1[0]][p.Item1[1]] == 'b');
+
+            if (!canGoUp)
+                continue;
+
+            int[][]? path = DijkstraPath(
+                pathList,
+                lowestPoint,
+                end,
+                map.Length,
+                map[0].Length);
+            
+            if (path is not null && path.Length < shortestPath)
+                shortestPath = path.Length;
+        }
+
+        return shortestPath - 1;
+    }
+
+    private static int[][]? DijkstraPath(
         (int[], int)[][][] paths,
         int[] start,
         int[] end,
@@ -107,6 +142,9 @@ public class HillClimbing
 
         IList<int[]> result = new List<int[]>();
         int[] temp = end;
+
+        if (previous[temp[0]][temp[1]][0] == -1)
+            return null;
 
         while (previous[temp[0]][temp[1]][0] != -1)
         {
@@ -180,6 +218,22 @@ public class HillClimbing
         'E' => current == 'z',
         _ => next - current < 2
     };
+
+    private static int[][] FindAllPositions(char[][] map, char search)
+    {
+        List<int[]> searchedPositions = new();
+
+        for (int i = 0; i < map.Length; i++)
+        {
+            for (int j = 0; j < map[0].Length; j++)
+            {
+                if (map[i][j] == search || map[i][j] == 'S')
+                    searchedPositions.Add(new int[2] { i, j });
+            }
+        }
+
+        return searchedPositions.ToArray();
+    }
 
     private static int[] FindPosition(char[][] map, char search)
     {

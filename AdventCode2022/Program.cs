@@ -11,117 +11,147 @@ using AdventCode2022.Day10;
 using AdventCode2022.Day11;
 using AdventCode2022.Day12;
 
-CalorieCounting elfExpedition = new();
+//Console.Write("Which day of advent of code puzzle would you like to run: ");
 
-int[] results = elfExpedition.Solutions();
+//string? output = Console.ReadLine();
 
-Console.WriteLine(
-    "Day 1 results: Elf with maximal calories in backpack = {0}; " +
-    "Top three elves with maximal calories in backpack = {1}",
-    results[0],
-    results[1]);
+int day = 12;
+int[] results;
 
-RockPaperScissors RPSGame = new();
+//if (!int.TryParse(output, out day))
+    //return;
 
-results = RPSGame.Solutions();
+switch (day)
+{
+    case 1:
+        CalorieCounting elfExpedition = new();
 
-Console.WriteLine(
-    "Day 2 results: Game score without knowing the instructions = {0}; " +
-    "Game score knowing the instructions = {1}",
-    results[0],
-    results[1]);
+        results = elfExpedition.Solutions();
 
-RucksackReorganization reorganization = new();
+        Console.WriteLine(
+            "Day 1 results: Elf with maximal calories in backpack = {0}; " +
+            "Top three elves with maximal calories in backpack = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 2:
+        RockPaperScissors RPSGame = new();
 
-results = reorganization.Solutions();
+        results = RPSGame.Solutions();
 
-Console.WriteLine(
-    "Day 3 results: Sum of product priorities found in both compartments in backpack = {0}; " +
-    "Sum of product priorities found in each three-Elf group = {1}",
-    results[0],
-    results[1]);
+        Console.WriteLine(
+            "Day 2 results: Game score without knowing the instructions = {0}; " +
+            "Game score knowing the instructions = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 3:
+        RucksackReorganization reorganization = new();
 
-CampCleanup campCleanup = new();
+        results = reorganization.Solutions();
 
-results = campCleanup.Solutions();
+        Console.WriteLine(
+            "Day 3 results: Sum of product priorities found in both compartments in backpack = {0}; " +
+            "Sum of product priorities found in each three-Elf group = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 4:
+        CampCleanup campCleanup = new();
 
-Console.WriteLine(
-    "Day 4 results: Assignments that fully covers one another = {0}; " +
-    "Assignments that overlaps one another = {1}",
-    results[0],
-    results[1]);
+        results = campCleanup.Solutions();
 
-SupplyStacks supplyStacks = new();
+        Console.WriteLine(
+            "Day 4 results: Assignments that fully covers one another = {0}; " +
+            "Assignments that overlaps one another = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 5:
+        SupplyStacks supplyStacks = new();
 
-string[] supplyResults = supplyStacks.Solutions();
+        string[] supplyResults = supplyStacks.Solutions();
 
-Console.WriteLine(
-    "Day 5 results: Crates on top of each stack after rearrangement = {0}; " +
-    "Crates on top of each stack after rearrangement using new crane = {1}",
-    supplyResults[0],
-    supplyResults[1]);
+        Console.WriteLine(
+            "Day 5 results: Crates on top of each stack after rearrangement = {0}; " +
+            "Crates on top of each stack after rearrangement using new crane = {1}",
+            supplyResults[0],
+            supplyResults[1]);
+        break;
+    case 6:
+        TuningTrouble tuningTrouble = new();
 
-TuningTrouble tuningTrouble = new();
+        results = tuningTrouble.Solutions();
 
-results = tuningTrouble.Solutions();
+        Console.WriteLine(
+            "Day 6 results: Start-of-packet marker found after {0} characters; " +
+            "Start-of-message marker found after {1} characters",
+            results[0],
+            results[1]);
+        break;
+    case 7:
+        NoSpaceLeft noSpaceLeft = new();
 
-Console.WriteLine(
-    "Day 6 results: Start-of-packet marker found after {0} characters; " +
-    "Start-of-message marker found after {1} characters",
-    results[0],
-    results[1]);
+        results = noSpaceLeft.ShowResult();
 
-NoSpaceLeft noSpaceLeft = new();
+        Console.WriteLine(
+            "Day 7 results: Total size of directories with size under 100000 = {0}; " +
+            "Smallest directory size that needs to be deleted to free enough memory = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 8:
+        TreetopTreeHouse treetopTreeHouse = new();
 
-results = noSpaceLeft.ShowResult();
+        results = treetopTreeHouse.Results();
 
-Console.WriteLine(
-    "Day 7 results: Total size of directories with size under 100000 = {0}; " +
-    "Smallest directory size that needs to be deleted to free enough memory = {1}",
-    results[0],
-    results[1]);
+        Console.WriteLine(
+            "Day 8 results: Tree coverage in the forest = {0}; " +
+            "Tree with highest scenic score = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 9:
+        RopeBridge ropeBridge = new();
 
-TreetopTreeHouse treetopTreeHouse = new();
+        results = ropeBridge.Results();
 
-results = treetopTreeHouse.Results();
+        Console.WriteLine(
+            "Day 9 results: Positions visited by the tail at least once with two knots = {0}; " +
+            "Positions visited by the tail at least once with ten knots = {1}",
+            results[0],
+            results[1]);
+        break;
+    case 10:
+        CathodeRayTube cathodeRayTube = new();
 
-Console.WriteLine(
-    "Day 8 results: Tree coverage in the forest = {0}; " +
-    "Tree with highest scenic score = {1}",
-    results[0],
-    results[1]);
+        int signalStrength = cathodeRayTube.Result();
 
-RopeBridge ropeBridge = new();
+        Console.Write("Day 10 results: Sum of six signal strengths = {0}; ",
+            signalStrength);
 
-results = ropeBridge.Results();
+        cathodeRayTube.GenerateResultOnScreen();
+        break;
+    case 11:
+        MonkeyInTheMiddle monkeyInTheMiddle = new();
 
-Console.WriteLine(
-    "Day 9 results: Positions visited by the tail at least once with two knots = {0}; " +
-    "Positions visited by the tail at least once with ten knots = {1}",
-    results[0],
-    results[1]);
+        results = monkeyInTheMiddle.Results();
 
-CathodeRayTube cathodeRayTube = new();
+        Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
+            results[0]);
+        break;
+    case 12:
+        HillClimbing hillClimbing = new();
 
-int signalStrength = cathodeRayTube.Result();
+        results = hillClimbing.Results();
 
-Console.Write("Day 10 results: Sum of six signal strengths = {0}; ",
-    signalStrength);
-
-cathodeRayTube.GenerateResultOnScreen();
-
-MonkeyInTheMiddle monkeyInTheMiddle = new();
-
-results = monkeyInTheMiddle.Results();
-
-Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
-    results[0]);
-
-HillClimbing hillClimbing = new();
-
-results = hillClimbing.Results();
-
-Console.WriteLine("Day 12 results: Shortest path to get to the top position on the map = {0}",
-    results[0]);
+        Console.WriteLine("Day 12 results: Shortest path to get to the top position on the map = {0}; " +
+            "Shortest path to get to the top from any lowest point = {1}",
+            results[0],
+            results[1]);
+        break;
+    default:
+        break;
+}
 
 Console.ReadKey();
