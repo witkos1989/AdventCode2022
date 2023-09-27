@@ -10,16 +10,17 @@ using AdventCode2022.Day9;
 using AdventCode2022.Day10;
 using AdventCode2022.Day11;
 using AdventCode2022.Day12;
+using AdventCode2022.Day13;
 
-//Console.Write("Which day of advent of code puzzle would you like to run: ");
+Console.Write("Which day of advent of code puzzle would you like to run: ");
 
-//string? output = Console.ReadLine();
+string? output = Console.ReadLine();
 
-int day = 12;
+int day;
 int[] results;
 
-//if (!int.TryParse(output, out day))
-    //return;
+if (!int.TryParse(output, out day))
+    return;
 
 switch (day)
 {
@@ -149,6 +150,9 @@ switch (day)
             "Shortest path to get to the top from any lowest point = {1}",
             results[0],
             results[1]);
+        break;
+    case 13:
+        DistressSignal distressSignal = new();
         break;
     default:
         break;

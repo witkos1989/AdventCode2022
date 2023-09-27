@@ -1,6 +1,6 @@
 ﻿namespace AdventCode2022.Day12;
 
-public class HillClimbing
+public sealed class HillClimbing
 {
     private readonly char[][] _data;
     private readonly (int[], int)[][][] _pathList;
@@ -295,7 +295,7 @@ public class HillClimbing
     }
 }
 
-file record NextEdge : IComparable<NextEdge>
+file sealed record NextEdge : IComparable<NextEdge>
 {
     internal int[] Index;
     internal int Weight;
