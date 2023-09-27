@@ -9,12 +9,12 @@ public sealed class DistressSignal
         StreamReader file = new(currentDirectory);
         IEnumerable<string?> rawData = file.ImportData();
 
-        ObjectTree[][] data = ProcessData(rawData).ToArray();
+        List<List<object>[]> data = ProcessData(rawData).ToList(); 
     }
 
-    private static IEnumerable<ObjectTree[]> ProcessData(IEnumerable<string?> data)
+    private static IEnumerable<List<object>[]> ProcessData(IEnumerable<string?> data)
     {
-        ObjectTree[] lists = new ObjectTree[2];
+        List<object>[] lists = new List<object>[2];
         int noOfLine = 0;
 
         foreach (string? line in data)
@@ -94,7 +94,7 @@ public sealed class DistressSignal
                 }
             }
 
-            lists[noOfLine] = mainList;
+            lists[noOfLine] = mainList.AsList();
             
             noOfLine++;
 
@@ -102,7 +102,7 @@ public sealed class DistressSignal
             {
                 yield return lists;
 
-                lists = new ObjectTree[2];
+                lists = new List<object>[2];
             }
         }
     }
@@ -112,5 +112,24 @@ public sealed class DistressSignal
         public ObjectTree? Parent;
         public int? Value;
         public List<ObjectTree>? Children;
+
+        public List<object> AsList()
+        {
+            List<object> result = new();
+
+            if (Children is null)
+                return result;
+
+            foreach (ObjectTree child in Children)
+            {
+                if (child.Value is not null)
+                    result.Add(child.Value);
+
+                if (child.Children is not null)
+                    result.Add(child.AsList());
+            }
+
+            return result;
+        }
     }
 }
