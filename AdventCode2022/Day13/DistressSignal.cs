@@ -2,14 +2,116 @@
 
 public sealed class DistressSignal
 {
-	public DistressSignal()
+    private readonly IEnumerable<List<object>[]> _data;
+
+    public DistressSignal()
 	{
         string currentDirectory = PathHelper.
-            GetCurrentDirectory("Day13", "TestInput.txt");
+            GetCurrentDirectory("Day13", "DistressSignalInput.txt");
         StreamReader file = new(currentDirectory);
         IEnumerable<string?> rawData = file.ImportData();
 
-        List<List<object>[]> data = ProcessData(rawData).ToList(); 
+        _data = ProcessData(rawData);
+    }
+
+    public int[] Results()
+    {
+        int[] results = new int[2];
+
+        results[0] = CountSumOfValidIndices(_data);
+
+        return results;
+    }
+
+    private static int CountSumOfValidIndices(IEnumerable<List<object>[]> input)
+    {
+        int sum = 0;
+        List<bool?> validityOfInputs = CheckInputOrders(input).ToList();
+
+        for (int i = 1; i <= validityOfInputs.Count; i++)
+        {
+            if (validityOfInputs[i - 1] is not null && (bool)validityOfInputs[i - 1]!)
+                sum += i;
+        }
+
+        return sum;
+    }
+
+    private static IEnumerable<bool?> CheckInputOrders(IEnumerable<List<object>[]> input) =>
+        input.Select(lists => ListComparer(lists[0], lists[1]));
+
+
+    private static bool? ListComparer(List<object> leftList, List<object> rightList)
+    {
+        bool? isInTheRightOrder = null;
+        int longerListCount = leftList.Count > rightList.Count ?
+            leftList.Count :
+            rightList.Count;
+
+        for (int i = 0; i < longerListCount; i++)
+        {
+            if (i >= leftList.Count)
+            {
+                isInTheRightOrder = true;
+
+                break;
+            }
+
+            if (i >= rightList.Count)
+            {
+                isInTheRightOrder = false;
+
+                break;
+            }
+
+            if (leftList[i] is int leftVal && rightList[i] is int rightVal)
+            {
+                int leftSideValue = leftVal;
+                int rightSideValue = rightVal;
+
+                if (leftSideValue > rightSideValue)
+                    isInTheRightOrder = false;
+
+                if (leftSideValue < rightSideValue)
+                    isInTheRightOrder = true;
+            }
+
+            if (leftList[i] is List<object> leftSubList)
+            {
+                if (rightList[i] is List<object> rightSubList)
+                {
+                    isInTheRightOrder =
+                        ListComparer(leftSubList, rightSubList);
+                }
+                else
+                {
+                    List<object> newList = new() { (int)rightList[i] };
+
+                    isInTheRightOrder =
+                        ListComparer(leftSubList, newList);
+                }
+            }
+            else if (rightList[i] is List<object> rightSmallerList)
+            {
+                if (leftList[i] is List<object> leftSmallerList)
+                {
+                    isInTheRightOrder =
+                        ListComparer(leftSmallerList, rightSmallerList);
+                }
+                else
+                {
+                    List<object> newList = new() { (int)leftList[i] };
+
+                    isInTheRightOrder =
+                        ListComparer(newList, rightSmallerList);
+                }
+            }
+
+            if (isInTheRightOrder is not null)
+                break;
+        }
+
+        return isInTheRightOrder;
     }
 
     private static IEnumerable<List<object>[]> ProcessData(IEnumerable<string?> data)
@@ -130,6 +232,6 @@ public sealed class DistressSignal
             }
 
             return result;
-        }
+        }     
     }
 }

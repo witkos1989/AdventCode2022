@@ -153,6 +153,11 @@ switch (day)
         break;
     case 13:
         DistressSignal distressSignal = new();
+
+        results = distressSignal.Results();
+
+        Console.WriteLine("Day 13 results: Sum of valid indices = {0};",
+            results[0]);
         break;
     default:
         break;
