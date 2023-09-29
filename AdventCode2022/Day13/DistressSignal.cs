@@ -2,7 +2,7 @@
 
 public sealed class DistressSignal
 {
-    private readonly IEnumerable<List<object>[]> _data;
+    private readonly List<List<object>> _data;
 
     public DistressSignal()
 	{
@@ -11,7 +11,7 @@ public sealed class DistressSignal
         StreamReader file = new(currentDirectory);
         IEnumerable<string?> rawData = file.ImportData();
 
-        _data = ProcessData(rawData);
+        _data = ProcessData(rawData).ToList();
     }
 
     public int[] Results()
@@ -20,13 +20,37 @@ public sealed class DistressSignal
 
         results[0] = CountSumOfValidIndices(_data);
 
+        results[1] = CountDistressSignalKey(_data);
+
         return results;
     }
 
-    private static int CountSumOfValidIndices(IEnumerable<List<object>[]> input)
+    private static int CountDistressSignalKey(List<List<object>> input)
+    {
+        List<object> firstDividerPacket = new() { new List<object> { 2 } };
+        List<object> secondDividerPacket = new() { new List<object> { 6 } };
+
+        AddDividerPackets(input, new[] { firstDividerPacket, secondDividerPacket });
+
+        ObjectListsQuickSort(input, 0, input.Count - 1);
+
+        int fistPacketIndex = input.FindIndex(p => p == firstDividerPacket) + 1;
+        int secondPacketIndex = input.FindIndex(p => p == secondDividerPacket) + 1;
+
+        return fistPacketIndex * secondPacketIndex;
+    }
+
+    private static int CountSumOfValidIndices(List<List<object>> input)
     {
         int sum = 0;
-        List<bool?> validityOfInputs = CheckInputOrders(input).ToList();
+        List<List<object>[]> groupedInput = new();
+
+        for (int i = 0; i < input.Count; i += 2)
+        {
+            groupedInput.Add(new List<object>[] { input[i], input[i + 1] });
+        }
+
+        List<bool?> validityOfInputs = CheckInputOrders(groupedInput).ToList();
 
         for (int i = 1; i <= validityOfInputs.Count; i++)
         {
@@ -37,7 +61,44 @@ public sealed class DistressSignal
         return sum;
     }
 
-    private static IEnumerable<bool?> CheckInputOrders(IEnumerable<List<object>[]> input) =>
+    private static void ObjectListsQuickSort(List<List<object>> lists, int low, int high)
+    {
+        if (low >= high)
+        {
+            return;
+        }
+
+        int pivotIndex = Partition(lists, low, high);
+
+        ObjectListsQuickSort(lists, low, pivotIndex - 1);
+        ObjectListsQuickSort(lists, pivotIndex + 1, high);
+    }
+
+    private static int Partition(List<List<object>> lists, int low, int high)
+    {
+        List<object> pivot = lists.ElementAt(high);
+        int index = low - 1;
+
+        for (int i = low; i < high; i++)
+        {
+            if ((bool)ListComparer(lists.ElementAt(i), pivot)!)
+            {
+                index++;
+                (lists[i], lists[index]) = (lists.ElementAt(index), lists.ElementAt(i));
+            }
+        }
+
+        index++;
+        (lists[high], lists[index]) = (lists.ElementAt(index), pivot);
+
+        return index;
+    }
+
+    private static void AddDividerPackets(List<List<object>> input,
+        List<object>[] packets) =>
+        input.AddRange(packets);
+
+    private static IEnumerable<bool?> CheckInputOrders(List<List<object>[]> input) =>
         input.Select(lists => ListComparer(lists[0], lists[1]));
 
 
@@ -114,19 +175,14 @@ public sealed class DistressSignal
         return isInTheRightOrder;
     }
 
-    private static IEnumerable<List<object>[]> ProcessData(IEnumerable<string?> data)
+    private static IEnumerable<List<object>> ProcessData(IEnumerable<string?> data)
     {
-        List<object>[] lists = new List<object>[2];
-        int noOfLine = 0;
-
         foreach (string? line in data)
         {
             int nestedArraysCount = 0;
 
             if (string.IsNullOrEmpty(line))
             {
-                noOfLine = 0;
-
                 continue;
             }
 
@@ -196,16 +252,7 @@ public sealed class DistressSignal
                 }
             }
 
-            lists[noOfLine] = mainList.AsList();
-            
-            noOfLine++;
-
-            if (noOfLine == 2)
-            {
-                yield return lists;
-
-                lists = new List<object>[2];
-            }
+            yield return mainList.AsList();
         }
     }
 

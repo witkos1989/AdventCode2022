@@ -156,8 +156,10 @@ switch (day)
 
         results = distressSignal.Results();
 
-        Console.WriteLine("Day 13 results: Sum of valid indices = {0};",
-            results[0]);
+        Console.WriteLine("Day 13 results: Sum of valid indices = {0}; " +
+            "Decoder key for the distress signal = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
