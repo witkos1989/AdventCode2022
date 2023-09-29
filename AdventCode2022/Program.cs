@@ -11,6 +11,7 @@ using AdventCode2022.Day10;
 using AdventCode2022.Day11;
 using AdventCode2022.Day12;
 using AdventCode2022.Day13;
+using AdventCode2022.Day14;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -160,6 +161,10 @@ switch (day)
             "Decoder key for the distress signal = {1}",
             results[0],
             results[1]);
+        break;
+    case 14:
+        RegolithReservoir regolithReservoir = new();
+
         break;
     default:
         break;
