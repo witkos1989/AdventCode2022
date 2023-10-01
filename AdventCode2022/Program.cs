@@ -12,6 +12,7 @@ using AdventCode2022.Day11;
 using AdventCode2022.Day12;
 using AdventCode2022.Day13;
 using AdventCode2022.Day14;
+using AdventCode2022.Day15;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -171,6 +172,10 @@ switch (day)
             "Units of sand came to rest before filling cave = {1}",
             results[0],
             results[1]);
+        break;
+    case 15:
+        BeaconExclusionZone beaconExclusionZone = new();
+
         break;
     default:
         break;
