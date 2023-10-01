@@ -167,10 +167,10 @@ switch (day)
 
         results = regolithReservoir.Results();
 
-        regolithReservoir.DrawMap();
-
-        Console.WriteLine("Day 14 results: Units of sand came to rest before overflowing = {0};",
-            results[0]);
+        Console.WriteLine("Day 14 first result: Units of sand came to rest before overflowing = {0}; " +
+            "Units of sand came to rest before filling cave = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;

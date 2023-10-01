@@ -6,7 +6,7 @@ public sealed class RegolithReservoir
 {
 	private readonly Regex _pointExtraction;
     private readonly IEnumerable<List<int[]>> _data;
-    private readonly char[,] _map;
+    private char[,] _map = new char[0,0];
 
 	public RegolithReservoir()
 	{
@@ -19,15 +19,19 @@ public sealed class RegolithReservoir
             RegexOptions.Compiled);
 
         _data = ProcessData(rawData, _pointExtraction).ToList();
-
-        _map = CaveGenerator(_data);
-	}
+    }
 
     public int[] Results()
     {
         int[] results = new int[2];
 
-        results[0] = CountPouredGrainsOfSand(_map);
+        _map = CaveGenerator(_data);
+
+        results[0] = CountPouredGrainsOfSand(_map, false);
+
+        _map = CaveGenerator(_data, true);
+
+        results[1] = CountPouredGrainsOfSand(_map, true);
 
         return results;
     }
@@ -44,13 +48,14 @@ public sealed class RegolithReservoir
         }
     }
 
-    private static int CountPouredGrainsOfSand(char[,] map) =>
-        PourSand(map);
+    private static int CountPouredGrainsOfSand(char[,] map, bool withFloor) =>
+        PourSand(map, withFloor);
 
-    private static int PourSand(char[,] map)
+    private static int PourSand(char[,] map, bool withFloor)
     {
         int grainsCount = 0;
         bool isOverflowing = false;
+        bool fullChamber = false;
 
         for (; ; )
         {
@@ -100,20 +105,29 @@ public sealed class RegolithReservoir
 
                     map[sandPos[0], sandPos[1]] = 'o';
 
+                    if (sandPos[0] == 500 && sandPos[1] == 0)
+                    {
+                        fullChamber = true;
+
+                        grainsCount++;
+                    }
+
                     break;
                 }
             }
 
-            if (isOverflowing)
+            if (isOverflowing || fullChamber)
                 break;
 
-            grainsCount += 1;
+            grainsCount++;
         }
 
         return grainsCount;
     }
 
-    private static char[,] CaveGenerator(IEnumerable<List<int[]>> input)
+    private static char[,] CaveGenerator(
+        IEnumerable<List<int[]>> input,
+        bool withFloor = false)
     {
         int[] mapDimensions = CalculateMapSize(input);
         char[,] map = new char[mapDimensions[0], mapDimensions[1]];
@@ -122,7 +136,18 @@ public sealed class RegolithReservoir
 
         AddRocksToMap(input, map);
 
+        if (withFloor)
+            AddFloor(map);
+
         return map;
+    }
+
+    private static void AddFloor(char[,] map)
+    {
+        for (int xPos = 0; xPos < map.GetLength(0); xPos++)
+        {
+            map[xPos, map.GetLength(1) - 1] = '#';
+        }
     }
 
     private static void AddRocksToMap(
@@ -198,7 +223,7 @@ public sealed class RegolithReservoir
             }
         }
 
-        return new int[] { maxX + 1, maxY + 1 };
+        return new int[] { maxX + maxY, maxY + 3 };
     }
 
     private static IEnumerable<List<int[]>> ProcessData(
