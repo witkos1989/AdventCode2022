@@ -165,6 +165,12 @@ switch (day)
     case 14:
         RegolithReservoir regolithReservoir = new();
 
+        results = regolithReservoir.Results();
+
+        regolithReservoir.DrawMap();
+
+        Console.WriteLine("Day 14 results: Units of sand came to rest before overflowing = {0};",
+            results[0]);
         break;
     default:
         break;
