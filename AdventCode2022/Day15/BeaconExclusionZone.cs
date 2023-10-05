@@ -8,7 +8,7 @@ public sealed class BeaconExclusionZone
     private readonly IEnumerable<int[]> _data;
 
     public BeaconExclusionZone()
-	{
+    {
         string currentDirectory = PathHelper.
             GetCurrentDirectory("Day15", "BeaconExclusionZoneInput.txt");
         StreamReader file = new(currentDirectory);
@@ -18,6 +18,69 @@ public sealed class BeaconExclusionZone
             RegexOptions.Compiled);
 
         _data = ProcessData(rawData, _sensorsExtraction);
+    }
+
+    public int[] Results()
+    {
+        int[] results = new int[2];
+
+        results[0] = CountPositionsOfBeaconAbsence(_data, 2000000);
+
+        return results;
+    }
+
+    private static int CountPositionsOfBeaconAbsence(IEnumerable<int[]> data, int y)
+    { 
+        List<int[]> intervals = new();
+        int result = 0;
+
+        foreach (int[] positions in data)
+        {
+            int signalStrength = Math.Abs(Math.Abs(positions[0]) -
+                Math.Abs(positions[2])) +
+                Math.Abs(Math.Abs(positions[1]) -
+                Math.Abs(positions[3]));
+
+            int exceedY = signalStrength - Math.Abs(positions[1] - y);
+
+            if (exceedY <= 0)
+                continue;
+
+            intervals.Add(new int[] { positions[0] - exceedY,
+                positions[0] + exceedY });
+        }
+
+        int minX = intervals.Min(i => i[0]);
+        int maxX = intervals.Max(i => i[1]);
+
+        List<int> beaconsOnY = data.
+            Where(b => b[3] == y).
+            Select(b => b[2]).
+            Distinct().
+            ToList();
+
+        List<int> sensorsOnY = data.
+            Where(b => b[1] == y).
+            Select(b => b[0]).
+            Distinct().
+            ToList();
+
+        for (int x = minX; x <= maxX + 1; x++)
+        {
+            if (beaconsOnY.Contains(x) || sensorsOnY.Contains(x))
+                continue;
+
+            foreach (int[] interval in intervals)
+            {
+                if (x <= interval[1] && x >= interval[0])
+                {
+                    result++;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     private static IEnumerable<int[]> ProcessData(

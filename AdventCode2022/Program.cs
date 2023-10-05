@@ -168,7 +168,7 @@ switch (day)
 
         results = regolithReservoir.Results();
 
-        Console.WriteLine("Day 14 first result: Units of sand came to rest before overflowing = {0}; " +
+        Console.WriteLine("Day 14 results: Units of sand came to rest before overflowing = {0}; " +
             "Units of sand came to rest before filling cave = {1}",
             results[0],
             results[1]);
@@ -176,6 +176,10 @@ switch (day)
     case 15:
         BeaconExclusionZone beaconExclusionZone = new();
 
+        results = beaconExclusionZone.Results();
+
+        Console.WriteLine("Day 15 results: Positions that doesn't contain beacon in selected row = {0};",
+            results[0]);
         break;
     default:
         break;
