@@ -12,7 +12,6 @@ public sealed class MonkeyInTheMiddle
         IEnumerable<string?> rawData = file.ImportData();
 
         _monkeys = ProcessData(rawData).ToArray();
-        
     }
 
     public int[] Results()
@@ -32,20 +31,26 @@ public sealed class MonkeyInTheMiddle
         {
             foreach (Monkey monkey in monkeys)
             {
-                int countItems = monkey.CountItems();
-
-                while(countItems > 0)
+                for (int item = 0; item < monkey.Items.Count; item++)
                 {
-                    int itemInMonkeyHand = monkey.InspectAndCalculateWorryLevel();
+                    long itemInMonkeyHand = monkey.Items[item];
 
-                    int throwTo = monkey.IsDivisible(itemInMonkeyHand) ?
+                    long worryLevel = monkey.
+                        Operation.
+                        Invoke(itemInMonkeyHand, monkey.OperationParam);
+
+                    worryLevel /= 3;
+
+                    long throwTo = worryLevel % monkey.DivisibleBy == 0 ?
                         monkey.ThrowToIfTrue :
                         monkey.ThrowToIfFalse;
 
-                    monkey.ThrowItemToMonkey(monkeys[throwTo], itemInMonkeyHand);
+                    monkeys[throwTo].Items.Add(worryLevel);
 
-                    countItems = monkey.CountItems();
+                    monkey.NoOfInspections++;
                 }
+
+                monkey.Items.Clear();
             }
         }
 
@@ -61,9 +66,9 @@ public sealed class MonkeyInTheMiddle
 
     private static IEnumerable<Monkey> ProcessData(IEnumerable<string?> data)
     {
-        List<int> items = new();
-        Func<int, int?, int> operation = (x, y) => x;
-        int? operationParameter = null;
+        List<long> items = new();
+        Func<long, long?, long> operation = (x, y) => x;
+        long? operationParameter = null;
         int divideBy = 0;
         int ifTrue = 0;
 
@@ -76,7 +81,7 @@ public sealed class MonkeyInTheMiddle
                     items.AddRange(ParseItems(line).ToList());
                     break;
                 case { } when line.Contains("Operation:"):
-                    (Func<int, int?, int>, int?) operationAndParamer =
+                    (Func<long, long?, long>, long?) operationAndParamer =
                         GetOperationAndSecondParameter(line);
                     operation = operationAndParamer.Item1;
                     operationParameter = operationAndParamer.Item2;
@@ -103,29 +108,29 @@ public sealed class MonkeyInTheMiddle
         }
     }
 
-    private static IEnumerable<int> ParseItems(string line)
+    private static IEnumerable<long> ParseItems(string line)
     {
         string[] items = line.Split(':')[1].Trim().Split(", ");
 
         foreach (string item in items)
         {
-            yield return Convert.ToInt32(item);
+            yield return Convert.ToInt64(item);
         }
     }
 
-    private static (Func<int, int?, int>, int?)
+    private static (Func<long, long?, long>, long?)
         GetOperationAndSecondParameter(string line)
     {
-        (char, int?) data = GenerateOperationData(line);
+        (char, long?) data = GenerateOperationData(line);
 
-        Func<int, int?, int> monkeyOperation = data switch
+        Func<long, long?, long> monkeyOperation = data switch
         {
             { } when data.Item1 == '+' => data.Item2 is null ?
                                 ((x, y) => x + x) :
-                                ((x, y) => x + (int)y!),
+                                ((x, y) => x + (long)y!),
             { } when data.Item1 == '*' => data.Item2 is null ?
                                 ((x, y) => x * x) :
-                                ((x, y) => x * (int)y!),
+                                ((x, y) => x * (long)y!),
             _ => (x, y) => x,
         };
 
@@ -157,18 +162,18 @@ public sealed class MonkeyInTheMiddle
 
     private record Monkey
     {
-        private readonly List<int> Items;
-        public Func<int, int?, int> Operation { get; }
-        public int? OperationParam { get; }
+        public List<long> Items { get; }
+        public Func<long, long?, long> Operation { get; }
+        public long? OperationParam { get; }
         public int DivisibleBy { get; } 
         public int ThrowToIfTrue { get; }
         public int ThrowToIfFalse { get; }
-        public int NoOfInspections { get; private set; }
+        public int NoOfInspections { get; set; }
 
         public Monkey(
-            List<int> items,
-            Func<int, int?, int> operation,
-            int? operationParam,
+            List<long> items,
+            Func<long, long?, long> operation,
+            long? operationParam,
             int divisibleBy,
             int throwToIfTrue,
             int throwToIfFalse)
@@ -181,28 +186,5 @@ public sealed class MonkeyInTheMiddle
             ThrowToIfFalse = throwToIfFalse;
             NoOfInspections = 0;
         }
-
-        public int CountItems() =>
-            Items.Count;
-
-        public int InspectAndCalculateWorryLevel()
-        {
-            NoOfInspections++;
-
-            int item = Items.First();
-
-            Items.Remove(item);
-
-            return Operation.Invoke(item, OperationParam) / 3;
-        }
-
-        public bool IsDivisible(int item) =>
-            item % DivisibleBy == 0;
-
-        public void ThrowItemToMonkey(Monkey monkey, int item) =>
-            monkey.AddItem(item);
-
-        private void AddItem(int item) =>
-            Items.Add(item);
     }
 }
