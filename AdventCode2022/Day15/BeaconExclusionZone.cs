@@ -26,20 +26,69 @@ public sealed class BeaconExclusionZone
 
         results[0] = CountPositionsOfBeaconAbsence(_data, 2000000);
 
+        results[1] = FindDistressSignal(_data);
+
         return results;
     }
 
-    private static int CountPositionsOfBeaconAbsence(IEnumerable<int[]> data, int y)
-    { 
+    private static int FindDistressSignal(IEnumerable<int[]> data)
+    {
+        int firstLine = 0, secondLine = 0;
+        List<int[]> signalSidesList = GenerateSensorsSignalSides(data).ToList();
+
+        for (int i = 0; i < signalSidesList.Count; i++)
+        {
+            for (int j = i + 1; j < signalSidesList.Count; j++)
+            {
+                int firstSide = signalSidesList[i][0];
+                int secondSide = signalSidesList[j][0];
+
+                if (Math.Abs(firstSide - secondSide) == 2)
+                    firstLine = Math.Min(firstSide, secondSide) + 1;
+
+                firstSide = signalSidesList[i][1];
+                secondSide = signalSidesList[j][1];
+
+                if (Math.Abs(firstSide - secondSide) == 2)
+                    secondLine = Math.Min(firstSide, secondSide) + 1;
+            }
+        }
+
+        int x = (firstLine + secondLine) / 2;
+        int y = (secondLine - firstLine) / 2;
+
+        var result = x * 4000000 + y;
+
+        return result;
+    }
+
+    private static IEnumerable<int[]> GenerateSensorsSignalSides(
+        IEnumerable<int[]> data)
+    {
+        foreach (int[] positions in data)
+        {
+            int signalStrength = Math.Abs(positions[0] - positions[2]) +
+                Math.Abs(positions[1] - positions[3]);
+
+            yield return new int[] { positions[0] - positions[1] - signalStrength,
+                positions[0] + positions[1] - signalStrength };
+
+            yield return new int[] { positions[0] - positions[1] + signalStrength,
+                positions[0] + positions[1] + signalStrength };
+        }
+    }
+
+    private static int CountPositionsOfBeaconAbsence(
+        IEnumerable<int[]> data,
+        int y)
+    {
         List<int[]> intervals = new();
         int result = 0;
 
         foreach (int[] positions in data)
         {
-            int signalStrength = Math.Abs(Math.Abs(positions[0]) -
-                Math.Abs(positions[2])) +
-                Math.Abs(Math.Abs(positions[1]) -
-                Math.Abs(positions[3]));
+            int signalStrength = Math.Abs(positions[0] - positions[2]) +
+                Math.Abs(positions[1] - positions[3]);
 
             int exceedY = signalStrength - Math.Abs(positions[1] - y);
 
@@ -50,8 +99,8 @@ public sealed class BeaconExclusionZone
                 positions[0] + exceedY });
         }
 
-        int minX = intervals.Min(i => i[0]);
-        int maxX = intervals.Max(i => i[1]);
+        int minX = intervals.Count > 0 ? intervals.Min(i => i[0]) : 0;
+        int maxX = intervals.Count > 0 ? intervals.Max(i => i[1]) : 0;
 
         List<int> beaconsOnY = data.
             Where(b => b[3] == y).
@@ -84,8 +133,8 @@ public sealed class BeaconExclusionZone
     }
 
     private static IEnumerable<int[]> ProcessData(
-    IEnumerable<string?> data,
-    Regex pattern)
+        IEnumerable<string?> data,
+        Regex pattern)
     {
         foreach (string? line in data)
         {

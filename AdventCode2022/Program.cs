@@ -178,8 +178,10 @@ switch (day)
 
         results = beaconExclusionZone.Results();
 
-        Console.WriteLine("Day 15 results: Positions that doesn't contain beacon in selected row = {0};",
-            results[0]);
+        Console.WriteLine("Day 15 results: Positions that doesn't contain beacon in selected row = {0}; " +
+            "Tuning frequency of distress signal = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
