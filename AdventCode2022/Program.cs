@@ -137,11 +137,16 @@ switch (day)
         break;
     case 11:
         MonkeyInTheMiddle monkeyInTheMiddle = new();
+        long firstResult = monkeyInTheMiddle.Results(1);
 
-        results = monkeyInTheMiddle.Results();
+        monkeyInTheMiddle = new();
 
-        Console.WriteLine("Day 11 results: Level of monkey buisness = {0}",
-            results[0]);
+        long secondResult = monkeyInTheMiddle.Results(2);
+
+        Console.WriteLine("Day 11 results: Level of monkey business with fixed worry level = {0}; " +
+            "Level of monkey business with calculated worry level = {1}",
+            firstResult,
+            secondResult);
         break;
     case 12:
         HillClimbing hillClimbing = new();

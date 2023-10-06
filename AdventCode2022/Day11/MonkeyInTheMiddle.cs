@@ -14,20 +14,18 @@ public sealed class MonkeyInTheMiddle
         _monkeys = ProcessData(rawData).ToArray();
     }
 
-    public int[] Results()
+    public long Results(byte partNo) => 
+        partNo == 1 ?
+        KeepAwayGame(_monkeys, false) :
+        KeepAwayGame(_monkeys, true);
+    
+    private static long KeepAwayGame(Monkey[] monkeys, bool selfWorryLevel)
     {
-        int[] results = new int[2];
+        long[] monkeyInspections = new long[monkeys.Length];
+        long mod = CalculateCommonDivision(monkeys);
+        int noOfIterations = selfWorryLevel ? 10000 : 20;
 
-        results[0] = KeepAwayGame(_monkeys);
-
-        return results;
-    }
-
-    private static int KeepAwayGame(Monkey[] monkeys)
-    {
-        int[] monkeyInspections = new int[monkeys.Length];
-
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < noOfIterations; i++)
         {
             foreach (Monkey monkey in monkeys)
             {
@@ -35,13 +33,11 @@ public sealed class MonkeyInTheMiddle
                 {
                     long itemInMonkeyHand = monkey.Items[item];
 
-                    long worryLevel = monkey.
-                        Operation.
-                        Invoke(itemInMonkeyHand, monkey.OperationParam);
+                    long worryLevel = selfWorryLevel ? monkey.
+                        CalculateWorryLevelByModulo(itemInMonkeyHand, mod) :
+                        monkey.CalculateWorryLevelByDivision(itemInMonkeyHand);
 
-                    worryLevel /= 3;
-
-                    long throwTo = worryLevel % monkey.DivisibleBy == 0 ?
+                    int throwTo = worryLevel % monkey.DivisibleBy == 0 ?
                         monkey.ThrowToIfTrue :
                         monkey.ThrowToIfFalse;
 
@@ -63,6 +59,11 @@ public sealed class MonkeyInTheMiddle
 
         return monkeyInspections[0] * monkeyInspections[1];
     }
+
+    private static long CalculateCommonDivision(Monkey[] monkeys) =>
+        monkeys.
+        Select(m => m.DivisibleBy).
+        Aggregate(1, (x, y) => x * y);
 
     private static IEnumerable<Monkey> ProcessData(IEnumerable<string?> data)
     {
@@ -168,7 +169,7 @@ public sealed class MonkeyInTheMiddle
         public int DivisibleBy { get; } 
         public int ThrowToIfTrue { get; }
         public int ThrowToIfFalse { get; }
-        public int NoOfInspections { get; set; }
+        public long NoOfInspections { get; set; }
 
         public Monkey(
             List<long> items,
@@ -186,5 +187,11 @@ public sealed class MonkeyInTheMiddle
             ThrowToIfFalse = throwToIfFalse;
             NoOfInspections = 0;
         }
+
+        public long CalculateWorryLevelByModulo(long item, long modulo) =>
+            Operation.Invoke(item, OperationParam) % modulo;
+
+        public long CalculateWorryLevelByDivision(long item) =>
+            Operation.Invoke(item, OperationParam) / 3;
     }
 }
