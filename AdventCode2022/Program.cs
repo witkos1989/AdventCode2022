@@ -13,6 +13,7 @@ using AdventCode2022.Day12;
 using AdventCode2022.Day13;
 using AdventCode2022.Day14;
 using AdventCode2022.Day15;
+using AdventCode2022.Day16;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -187,6 +188,9 @@ switch (day)
             "Tuning frequency of distress signal = {1}",
             results[0],
             results[1]);
+        break;
+    case 16:
+        ProboscideaVolcanium proboscideaVolcanium = new();
         break;
     default:
         break;
