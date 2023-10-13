@@ -191,6 +191,11 @@ switch (day)
         break;
     case 16:
         ProboscideaVolcanium proboscideaVolcanium = new();
+
+        results = proboscideaVolcanium.Results();
+
+        Console.WriteLine("Day 16 results: Most pressure that can be realeased = {0}; ",
+            results[0]);
         break;
     default:
         break;
