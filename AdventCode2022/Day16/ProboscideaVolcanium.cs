@@ -40,18 +40,17 @@ public sealed class ProboscideaVolcanium
         return results;
     }
 
-    private int CalculateFlowRate(Valve current,
+    private int CalculateFlowRate(
+        Valve current,
         Dictionary<string, Valve> opened,
         int minutes)
     {
         if (minutes <= 0)
             return 0;
 
-        List<string> keyList = opened.Keys.ToList();
+        List<string> keyList = new(opened.Keys) { current.Name };
 
-        keyList.Add(current.Name);
-
-        (string, int) key = (String.Join(String.Empty, keyList), minutes);
+        (string, int) key = (string.Join(string.Empty, keyList), minutes);
 
         if (_cachedValues.ContainsKey(key))
             return _cachedValues[key];
@@ -115,10 +114,7 @@ public sealed class ProboscideaVolcanium
         public Dictionary<string, Valve> Valves { get; }
         private readonly List<string> LeadsTo;
 
-        public Valve(
-            string name,
-            int flowRate,
-            List<string> leadsTo)
+        public Valve(string name, int flowRate, List<string> leadsTo)
         {
             Name = name;
             FlowRate = flowRate;
