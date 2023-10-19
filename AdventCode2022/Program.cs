@@ -14,6 +14,7 @@ using AdventCode2022.Day13;
 using AdventCode2022.Day14;
 using AdventCode2022.Day15;
 using AdventCode2022.Day16;
+using AdventCode2022.Day17;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -195,6 +196,14 @@ switch (day)
         results = proboscideaVolcanium.Results();
 
         Console.WriteLine("Day 16 results: Most pressure that can be realeased = {0}; ",
+            results[0]);
+        break;
+    case 17:
+        PyroclasticFlow pyroclasticFlow = new();
+
+        results = pyroclasticFlow.Results();
+
+        Console.WriteLine("Day 17 results: Height of tower after 2022 rocks have fallen = {0}; ",
             results[0]);
         break;
     default:
