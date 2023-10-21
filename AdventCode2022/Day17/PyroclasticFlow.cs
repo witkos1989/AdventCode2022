@@ -5,10 +5,10 @@ namespace AdventCode2022.Day17;
 
 public class PyroclasticFlow
 {
-    private readonly int _rockCount = 2022;
+    private readonly int _noOfRocks = 2022;
     private readonly string _windFlow;
-    private readonly string[] _map;
-    private readonly IList<string[]> _rockShapes;
+    private readonly byte[,] _map;
+    private readonly IList<byte[,]> _rocks;
 
     public PyroclasticFlow()
     {
@@ -16,208 +16,172 @@ public class PyroclasticFlow
             GetCurrentDirectory("Day17", "PyroclasticFlowInput.txt");
         StreamReader file = new(currentDirectory);
         _windFlow = file.ImportData().First()!;
-        _rockShapes = GenerateRockShapes();
-        _map = GenerateMap(_rockCount * 4).ToArray();
+        _rocks = GenerateRocks();
+        _map = new byte[_noOfRocks * 2, 7];
     }
 
     public int[] Results()
     {
         int[] results = new int[2];
 
-        results[0] = FallingRocks(_map, _rockShapes, _windFlow, _rockCount);
-
-        DrawMap(_map.Reverse());
+        results[0] = FallingRocks(_map, _rocks, _windFlow, _noOfRocks);
 
         return results;
     }
-    
+
     private static int FallingRocks(
-        string[] map,
-        IList<string[]> rocks,
-        string windFlow,
-        int rockCount)
-    {
-        int towerHeight = 0;
-        int windFlowIndex = 0;
-
-        for (int i = 0; i < rockCount; i++)
-        {
-            int horPosition = 2;
-            string[] rock = rocks[i % 5];
-            int rockPosition = towerHeight + 4;
-            bool rockPlaced = false;
-
-            while (!rockPlaced)
-            {
-                char windDirection = windFlow[windFlowIndex];
-
-                PushRock(
-                    rock,
-                    map,
-                    rockPosition,
-                    windDirection,
-                    ref horPosition);
-
-                bool canGoDown = ColliderChecker(
-                    rock,
-                    map,
-                    rockPosition,
-                    horPosition,
-                    horPosition,
-                    ref towerHeight);
-
-                if (canGoDown)
-                {
-                    rockPosition -= 1;
-                }
-                else
-                {
-                    AddRockToMap(rock, map, rockPosition, horPosition);
-
-                    rockPlaced = true;
-                }
-
-                windFlowIndex += 1;
-
-                if (windFlowIndex >= windFlow.Length)
-                    windFlowIndex = 0;
-            }
-        }
-
-        return towerHeight;
-    }
-
-    private static void PushRock(
-        string[] rock,
-        string[] map,
-        int rockPosition,
-        char windDirection,
-        ref int horizontalPosition)
+        byte[,] map, IList<byte[,]> rocks, string wind, int noOfRocks)
     {
         int height = 0;
+        int windIndex = 0;
 
-        if (windDirection == '>')
+        for (int i = 0; i < noOfRocks; i++)
         {
-            if (horizontalPosition + rock[0].Length + 1 <= 7 &&
-                ColliderChecker(
-                    rock,
-                    map,
-                    rockPosition,
-                    horizontalPosition,
-                    horizontalPosition + 1,
-                    ref height))
-                horizontalPosition += 1;
+            int x = 2;
+            int y = height + 3;
+            byte[,] rock = rocks[i % 5];
+            bool placed = false;
+
+            while (!placed)
+            {
+                Push(map, rock, wind[windIndex], y, ref x);
+
+                bool touchingFloor =
+                    CollidingWithFloor(map, rock, x, y, ref height);
+
+                if (touchingFloor)
+                {
+                    AddRockToMap(map, rock, x, y);
+                    placed = true;
+                }
+                else
+                {
+                    y -= 1;
+                }
+
+                windIndex += 1;
+
+                if (windIndex >= wind.Length)
+                    windIndex = 0;
+            }
         }
-        else
-        {
-            if (horizontalPosition - 1 >= 0 &&
-                ColliderChecker(
-                    rock,
-                    map,
-                    rockPosition,
-                    horizontalPosition,
-                    horizontalPosition - 1,
-                    ref height))
-                    horizontalPosition -= 1;
-        }
+
+        return height;
     }
 
-    private static bool ColliderChecker(
-        string[] rock,
-        string[] map,
-        int rockPosition,
-        int currPosition,
-        int nextPosition,
-        ref int towerHeight)
+    private static void Push(
+        byte[,] map, byte[,] rock, char wind, int y, ref int x)
     {
-        for (int i = rock.Length - 1; i >= 0; i--)
-        {
-            string currentLevel = map[rockPosition + i];
-            string levelBelow = map[rockPosition + i - 1];
+        bool touchingWall =
+            CollidingWithWall(map.GetLength(1), rock.GetLength(1), wind, x);
+        bool touchingRocks =
+            CollidingWithRocks(map, rock, wind, x, y);
 
-            for (int j = 0; j < rock[i].Length; j++)
+        if (!touchingWall && !touchingRocks)
+            x = wind == '>' ? x + 1 : x - 1;
+    }
+
+    private static bool CollidingWithWall(
+        int mapWidth, int rockWidth, char wind, int x) =>
+        wind == '>' ? x + rockWidth >= mapWidth : x - 1 < 0;
+
+    private static bool CollidingWithRocks(
+        byte[,] map, byte[,] rock, char wind, int x, int y)
+    {
+        for (int i = 0; i < rock.GetLength(0); i++)
+        {
+            for (int j = 0; j < rock.GetLength(1); j++)
             {
-                if (rock[i][j] == '.')
+                if (rock[i, j] == 0)
                     continue;
 
-                if (currPosition == nextPosition)
+                if (wind == '>')
                 {
-                    char positionBelow = levelBelow[j + 1 + currPosition];
+                    if (x + j + 1 >= map.GetLength(1))
+                        continue;
 
-                    if (positionBelow == '#' || positionBelow == '-')
-                    {
-                        towerHeight = Math.Max(
-                            towerHeight,
-                            rockPosition + rock.Length - 1);
+                    byte mapPos = map[y + i, x + j + 1];
 
-                        return false;
-                    }
+                    if (mapPos == 1)
+                        return true;
                 }
                 else
                 {
-                    if (nextPosition > currPosition)
-                    {
-                        if (currentLevel[currPosition + j + 2] == '#')
-                            return false;
-                    }
-                    else
-                    {
-                        if (currentLevel[currPosition + j] == '#')
-                            return false;
-                    }
+                    if (x == 0)
+                        continue;
+
+                    int mapPos = map[y + i, x + j - 1];
+
+                    if (mapPos == 1)
+                        return true;
                 }
             }
         }
 
-        return true;
+        return false;
     }
 
-    private static void AddRockToMap(
-        string[] rock,
-        string[] map,
-        int rockPosition,
-        int horizontalPosition)
+    private static bool CollidingWithFloor(
+        byte[,] map, byte[,] rock, int x, int y, ref int height)
     {
-        for (int i = rock.Length - 1; i >= 0; i--)
+        if (y == 0)
         {
-            StringBuilder builder = new();
+            height = rock.GetLength(0);
+            return true;
+        }
 
-            for (int j = 0; j < map[0].Length; j++)
+        for (int i = 0; i < rock.GetLength(0); i++)
+        {
+            for (int j = 0; j < rock.GetLength(1); j++)
             {
-                if (j < horizontalPosition + 1 ||
-                    j > horizontalPosition + rock[i].Length)
-                    builder.Append(map[i + rockPosition][j]);
-                else
-                    builder.Append(rock[i][j - horizontalPosition - 1]);
+                if (rock[i, j] == 0)
+                    continue;
+
+                byte below = map[y + i - 1, x + j];
+
+                if (below == 1)
+                {
+                    height = Math.Max(height, y + rock.GetLength(0));
+                    return true;
+                }
             }
-
-            map[i + rockPosition] = builder.ToString();
         }
+
+        return false;
     }
 
-    private static void DrawMap(IEnumerable<string> map)
+    private static void AddRockToMap(byte[,] map, byte[,] rock, int x, int y)
     {
-        foreach (string line in map)
-            Console.WriteLine(line);
-    }
-
-    private static IEnumerable<string> GenerateMap(int size)
-    {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < rock.GetLength(0); i++)
         {
-            if (i == 0)
-                yield return "+-------+";
+            for (int j = 0; j < rock.GetLength(1); j++)
+            {
+                if (rock[i, j] == 0)
+                    continue;
 
-            yield return "|.......|";
+                map[y + i, x + j] = 1;
+            }
         }
     }
 
-    private static IList<string[]> GenerateRockShapes() => new List<string[]>
+    private static IList<byte[,]> GenerateRocks() => new List<byte[,]>
     {
-        new string[1] { "####" },
-        new string[3] { ".#.", "###", ".#." },
-        new string[3] { "###", "..#", "..#" },
-        new string[4] { "#", "#", "#", "#" },
-        new string[2] { "##", "##" }
+        new byte[1, 4] { { 1, 1, 1, 1 } },
+        new byte[3, 3] { { 0, 1, 0 }, { 1, 1, 1 }, { 0, 1, 0 } },
+        new byte[3, 3] { { 1, 1, 1 }, { 0, 0, 1 }, { 0, 0, 1 } },
+        new byte[4, 1] { { 1 }, { 1 }, { 1 }, { 1 } },
+        new byte[2, 2] { { 1, 1 }, { 1, 1 } },
     };
+
+    private static void DrawMap(byte[,] map)
+    {
+        for (int i = map.GetLength(0) - 1; i >= 0; i--)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                Console.Write(map[i, j]);
+            }
+            Console.WriteLine();
+        }
+    }
 }
