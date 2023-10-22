@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿namespace AdventCode2022.Day17;
 
-namespace AdventCode2022.Day17;
-
-public class PyroclasticFlow
+public sealed class PyroclasticFlow
 {
     private readonly int _noOfRocks = 2022;
     private readonly string _windFlow;
@@ -52,6 +49,7 @@ public class PyroclasticFlow
                 if (touchingFloor)
                 {
                     AddRockToMap(map, rock, x, y);
+
                     placed = true;
                 }
                 else
@@ -88,6 +86,8 @@ public class PyroclasticFlow
     private static bool CollidingWithRocks(
         byte[,] map, byte[,] rock, char wind, int x, int y)
     {
+        byte mapPos;
+
         for (int i = 0; i < rock.GetLength(0); i++)
         {
             for (int j = 0; j < rock.GetLength(1); j++)
@@ -100,21 +100,18 @@ public class PyroclasticFlow
                     if (x + j + 1 >= map.GetLength(1))
                         continue;
 
-                    byte mapPos = map[y + i, x + j + 1];
-
-                    if (mapPos == 1)
-                        return true;
+                    mapPos = map[y + i, x + j + 1];
                 }
                 else
                 {
                     if (x == 0)
                         continue;
 
-                    int mapPos = map[y + i, x + j - 1];
-
-                    if (mapPos == 1)
-                        return true;
+                    mapPos = map[y + i, x + j - 1];
                 }
+
+                if (mapPos == 1)
+                    return true;
             }
         }
 
@@ -124,9 +121,12 @@ public class PyroclasticFlow
     private static bool CollidingWithFloor(
         byte[,] map, byte[,] rock, int x, int y, ref int height)
     {
+        byte below;
+
         if (y == 0)
         {
             height = rock.GetLength(0);
+
             return true;
         }
 
@@ -137,11 +137,12 @@ public class PyroclasticFlow
                 if (rock[i, j] == 0)
                     continue;
 
-                byte below = map[y + i - 1, x + j];
+                below = map[y + i - 1, x + j];
 
                 if (below == 1)
                 {
                     height = Math.Max(height, y + rock.GetLength(0));
+
                     return true;
                 }
             }
@@ -172,16 +173,4 @@ public class PyroclasticFlow
         new byte[4, 1] { { 1 }, { 1 }, { 1 }, { 1 } },
         new byte[2, 2] { { 1, 1 }, { 1, 1 } },
     };
-
-    private static void DrawMap(byte[,] map)
-    {
-        for (int i = map.GetLength(0) - 1; i >= 0; i--)
-        {
-            for (int j = 0; j < map.GetLength(1); j++)
-            {
-                Console.Write(map[i, j]);
-            }
-            Console.WriteLine();
-        }
-    }
 }
