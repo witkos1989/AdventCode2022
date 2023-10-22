@@ -209,6 +209,11 @@ switch (day)
         break;
     case 18:
         BoilingBoulders boilingBoulders = new();
+
+        results = boilingBoulders.Results();
+
+        Console.WriteLine("Day 18 results: Surface area of scanned lava droplets = {0}; ",
+            results[0]);
         break;
     default:
         break;
