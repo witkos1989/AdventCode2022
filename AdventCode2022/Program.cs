@@ -15,6 +15,7 @@ using AdventCode2022.Day14;
 using AdventCode2022.Day15;
 using AdventCode2022.Day16;
 using AdventCode2022.Day17;
+using AdventCode2022.Day18;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -205,6 +206,9 @@ switch (day)
 
         Console.WriteLine("Day 17 results: Height of tower after 2022 rocks have fallen = {0}; ",
             results[0]);
+        break;
+    case 18:
+        BoilingBoulders boilingBoulders = new();
         break;
     default:
         break;
