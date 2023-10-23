@@ -212,8 +212,10 @@ switch (day)
 
         results = boilingBoulders.Results();
 
-        Console.WriteLine("Day 18 results: Surface area of scanned lava droplets = {0}; ",
-            results[0]);
+        Console.WriteLine("Day 18 results: Surface area of scanned lava droplets = {0}; " +
+            "Exterior surface ares of scanned lava droplets = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
