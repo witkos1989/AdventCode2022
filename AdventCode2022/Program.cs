@@ -16,6 +16,7 @@ using AdventCode2022.Day15;
 using AdventCode2022.Day16;
 using AdventCode2022.Day17;
 using AdventCode2022.Day18;
+using AdventCode2022.Day19;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -216,6 +217,9 @@ switch (day)
             "Exterior surface ares of scanned lava droplets = {1}",
             results[0],
             results[1]);
+        break;
+    case 19:
+        NotEnoughMinerals notEnoughMinerals  = new();
         break;
     default:
         break;
