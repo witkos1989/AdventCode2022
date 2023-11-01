@@ -23,15 +23,19 @@ public sealed class NotEnoughMinerals
     public int[] Results()
     {
         int[] results = new int[2];
+        Blueprint[] blueprints = _blueprints.ToArray();
+        Blueprint[] threeFirstBlueprints = blueprints.Take(3).ToArray();
 
-        results[0] = CollectingGeodes(_blueprints, 24);
+        results[0] = CollectingGeodes(blueprints, 24);
+
+        results[1] = CollectingGeodes(threeFirstBlueprints, 32);
 
         return results;
     }
 
-    private int CollectingGeodes(IEnumerable<Blueprint> blueprints, byte time)
+    private int CollectingGeodes(Blueprint[] blueprints, byte time)
     {
-        int sum = 0;
+        int sum = blueprints.Length != 3 ? 0 : 1;
 
         foreach (Blueprint blueprint in blueprints)
         {
@@ -41,7 +45,14 @@ public sealed class NotEnoughMinerals
 
             GeodesDFS(0, 0, 0, 0, 1, 0, 0, 0, 4, maxOre, blueprint, time);
 
-            sum += blueprint.Number * _maxGeodes;
+            if (blueprints.Length != 3)
+            {
+                sum += blueprint.Number * _maxGeodes;
+            }
+            else
+            {
+                sum *= _maxGeodes;
+            }
 
             _maxGeodes = 0;
         }
@@ -108,7 +119,10 @@ public sealed class NotEnoughMinerals
                       oRobot, cRobot, sRobot, gRobot,
                       2, maxOre, blueprint, time);
 
-            return;
+            //commenting this return severly slows down operation time,
+            //but when it is enabled, it gives wrong answer in second puzzle
+
+            //return;
         }
 
         if (ore >= blueprint.ClayRobot &&

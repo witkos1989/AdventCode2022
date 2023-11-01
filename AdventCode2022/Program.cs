@@ -223,8 +223,10 @@ switch (day)
 
         results = notEnoughMinerals.Results();
 
-        Console.WriteLine("Day 19 results: Quality level of all of the blueprints = {0}; ",
-            results[0]);
+        Console.WriteLine("Day 19 results: Quality level of all of the blueprints = {0}; " +
+            "Largest number of geodes using three first blueprints = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
