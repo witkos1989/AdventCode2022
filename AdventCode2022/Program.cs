@@ -219,7 +219,12 @@ switch (day)
             results[1]);
         break;
     case 19:
-        NotEnoughMinerals notEnoughMinerals  = new();
+        NotEnoughMinerals notEnoughMinerals = new();
+
+        results = notEnoughMinerals.Results();
+
+        Console.WriteLine("Day 19 results: Quality level of all of the blueprints = {0}; ",
+            results[0]);
         break;
     default:
         break;
