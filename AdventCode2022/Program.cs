@@ -232,10 +232,12 @@ switch (day)
     case 20:
         GrovePositioningSystem grovePositioningSystem = new();
 
-        results = grovePositioningSystem.Results();
+        long[] longResults = grovePositioningSystem.Results();
 
-        Console.WriteLine("Day 20 results: Sum of numbers that create grove coordinates = {0}; ",
-            results[0]);
+        Console.WriteLine("Day 20 results: Sum of numbers that create grove coordinates = {0}; " +
+            "Sum of numbers that create grove coordinates using decryption key = {1}",
+            longResults[0],
+            longResults[1]);
         break;
     default:
         break;
