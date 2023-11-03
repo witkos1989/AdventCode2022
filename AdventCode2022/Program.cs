@@ -231,6 +231,11 @@ switch (day)
         break;
     case 20:
         GrovePositioningSystem grovePositioningSystem = new();
+
+        results = grovePositioningSystem.Results();
+
+        Console.WriteLine("Day 20 results: Sum of numbers that create grove coordinates = {0}; ",
+            results[0]);
         break;
     default:
         break;
