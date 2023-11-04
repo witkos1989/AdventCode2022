@@ -18,6 +18,7 @@ using AdventCode2022.Day17;
 using AdventCode2022.Day18;
 using AdventCode2022.Day19;
 using AdventCode2022.Day20;
+using AdventCode2022.Day21;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -238,6 +239,9 @@ switch (day)
             "Sum of numbers that create grove coordinates using decryption key = {1}",
             longResults[0],
             longResults[1]);
+        break;
+    case 21:
+        MonkeyMath monkeyMath = new();
         break;
     default:
         break;
