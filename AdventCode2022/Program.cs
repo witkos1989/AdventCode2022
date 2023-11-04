@@ -26,6 +26,7 @@ string? output = Console.ReadLine();
 
 int day;
 int[] results;
+long[] longResults;
 
 if (!int.TryParse(output, out day))
     return;
@@ -233,7 +234,7 @@ switch (day)
     case 20:
         GrovePositioningSystem grovePositioningSystem = new();
 
-        long[] longResults = grovePositioningSystem.Results();
+        longResults = grovePositioningSystem.Results();
 
         Console.WriteLine("Day 20 results: Sum of numbers that create grove coordinates = {0}; " +
             "Sum of numbers that create grove coordinates using decryption key = {1}",
@@ -242,6 +243,11 @@ switch (day)
         break;
     case 21:
         MonkeyMath monkeyMath = new();
+
+        longResults = monkeyMath.Results();
+
+        Console.WriteLine("Day 21 results: Root monkey yells = {0}; ",
+            longResults[0]);
         break;
     default:
         break;
