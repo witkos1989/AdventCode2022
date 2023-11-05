@@ -246,8 +246,10 @@ switch (day)
 
         longResults = monkeyMath.Results();
 
-        Console.WriteLine("Day 21 results: Root monkey yells = {0}; ",
-            longResults[0]);
+        Console.WriteLine("Day 21 results: Root monkey yells = {0}; " +
+            "I should yell = {1}",
+            longResults[0],
+            longResults[1]);
         break;
     default:
         break;
