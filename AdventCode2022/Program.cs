@@ -19,6 +19,7 @@ using AdventCode2022.Day18;
 using AdventCode2022.Day19;
 using AdventCode2022.Day20;
 using AdventCode2022.Day21;
+using AdventCode2022.Day22;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -250,6 +251,9 @@ switch (day)
             "I should yell = {1}",
             longResults[0],
             longResults[1]);
+        break;
+    case 22:
+        MonkeyMap monkeyMap = new();
         break;
     default:
         break;
