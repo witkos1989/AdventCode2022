@@ -254,6 +254,11 @@ switch (day)
         break;
     case 22:
         MonkeyMap monkeyMap = new();
+
+        results = monkeyMap.Results();
+
+        Console.WriteLine("Day 22 results: Final password for first puzzle = {0};",
+            results[0]);
         break;
     default:
         break;
