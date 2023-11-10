@@ -56,13 +56,13 @@ public sealed class MonkeyMap
         ([>= 150 and < 200, 49], 0) =>
             (new int[2] { 149, position[0] - cubeSize * 2 }, 3),
         ([>= 0 and < 50, 50], 2) =>
-            (new int[2] { position[0] + cubeSize * 2, 0 }, 0),
+            (new int[2] { cubeSize - 1 - position[0] + cubeSize * 2, 0 }, 0),
         ([>= 100 and < 150, 0], 2) =>
-            (new int[2] { position[0] - cubeSize * 2, 50 }, 0),
+            (new int[2] { cubeSize - 1 - (position[0] - cubeSize * 2), 50 }, 0),
         ([>= 0 and < 50, 149], 0) =>
-            (new int[2] { position[0] + cubeSize * 2 ,99 }, 2),
+            (new int[2] { cubeSize - 1 - position[0] + cubeSize * 2 ,99 }, 2),
         ([>= 100 and < 150, 99], 0) =>
-            (new int[2] { position[0] - cubeSize * 2, 149 }, 2),
+            (new int[2] { cubeSize- 1 - (position[0] - cubeSize * 2), 149 }, 2),
         ([>= 50 and < 100, 50], 2) =>
             (new int[2] { 100, position[0] - cubeSize }, 1),
         ([100, >= 0 and < 50], 3) =>
