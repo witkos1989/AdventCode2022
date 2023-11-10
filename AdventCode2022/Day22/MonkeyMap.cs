@@ -26,13 +26,56 @@ public sealed class MonkeyMap
     {
         int[] results = new int[2];
 
-        results[0] = GoPath(_map, _steps);
+        results[0] = GoPath(_map, _steps, false);
 
+        results[1] = GoPath(_map, _steps, true);
+        
         return results;
     }
 
-    private static int GoPath(char[][] map, (int, char)[] steps)
+    public static (int[], int) MoveToOtherSide(
+        int[] position,
+        int direction,
+        int cubeSize) =>
+        (position, direction) switch
     {
+        ([0, >= 50 and < 100], 3) =>
+            (new int[2] { position[1] + cubeSize * 2, 0 }, 0),
+        ([>= 150 and < 199, 0], 2) =>
+            (new int[2] { 0, position[0] - cubeSize * 2 }, 1),
+        ([0, >= 100 and < 150], 3) =>
+            (new int[2] { 199, position[1] - cubeSize * 2 }, 3),
+        ([199, >= 0 and < 50], 1) =>
+            (new int[2] { 0, position[1] + cubeSize * 2 }, 1),
+        ([49, >= 100 and < 150], 1) =>
+            (new int[2] { position[1] - cubeSize, 99 }, 2),
+        ([>= 50 and < 100, 99], 0) =>
+            (new int[2] { 49, position[0] + cubeSize }, 3),
+        ([149, >= 50 and < 100], 1) =>
+            (new int[2] { position[1] + cubeSize * 2, 49 }, 2),
+        ([>= 150 and < 200, 49], 0) =>
+            (new int[2] { 149, position[0] - cubeSize * 2 }, 3),
+        ([>= 0 and < 50, 50], 2) =>
+            (new int[2] { position[0] + cubeSize * 2, 0 }, 0),
+        ([>= 100 and < 150, 0], 2) =>
+            (new int[2] { position[0] - cubeSize * 2, 50 }, 0),
+        ([>= 0 and < 50, 149], 0) =>
+            (new int[2] { position[0] + cubeSize * 2 ,99 }, 2),
+        ([>= 100 and < 150, 99], 0) =>
+            (new int[2] { position[0] - cubeSize * 2, 149 }, 2),
+        ([>= 50 and < 100, 50], 2) =>
+            (new int[2] { 100, position[0] - cubeSize }, 1),
+        ([100, >= 0 and < 50], 3) =>
+            (new int[2] { position[1] + cubeSize, 50 }, 0),
+        _ => (new int[2] { 0, 0 }, -1)
+    };
+
+    private static int CalculateCubeSize(char[][] map) => (int)Math.Sqrt
+        (map.Select(c => c.Where(c => c == '.' || c == '#').Count()).Sum()/6);
+    
+    private static int GoPath(char[][] map, (int, char)[] steps, bool isCube)
+    {
+        int cubeSize = CalculateCubeSize(map);
         int[] position = new int[2] { 0, Array.IndexOf(map[0], '.') };
         char[] directions = new char[4] { 'R', 'D', 'L', 'U' };
         int currentDir = 0;
@@ -43,25 +86,42 @@ public sealed class MonkeyMap
             {
                 char nextPosition = '.';
 
+                if (isCube)
+                {
+                    (int[] pos, int dir) =
+                        MoveToOtherSide(position, currentDir, cubeSize);
+
+                    if (dir != -1)
+                    {
+                        if (map[pos[0]][pos[1]] == '#')
+                            break;
+                        else
+                            (position, currentDir) = (pos, dir);
+
+                        continue;
+                    }
+                }
+
                 switch (directions[currentDir])
                 {
                     case 'R':
-                        nextPosition = TakeStep(map, position, 0, 1);
+                        nextPosition = TakeStep(map, position, 0, 1, isCube);
                         break;
                     case 'L':
-                        nextPosition = TakeStep(map, position, 0, -1);
+                        nextPosition = TakeStep(map, position, 0, -1, isCube);
                         break;
                     case 'D':
-                        nextPosition = TakeStep(map, position, 1, 1);
+                        nextPosition = TakeStep(map, position, 1, 1, isCube);
                         break;
                     case 'U':
-                        nextPosition = TakeStep(map, position, 1, -1);
+                        nextPosition = TakeStep(map, position, 1, -1, isCube);
                         break;
                 }
 
                 if (nextPosition == '#')
                     break;
             }
+
             if (steps[i].Item2 != ' ')
                 currentDir = ChangeDir(directions, currentDir, steps[i].Item2);
         }
@@ -75,7 +135,8 @@ public sealed class MonkeyMap
         char[][] map,
         int[] position,
         int direction,
-        int move)
+        int move,
+        bool isCube)
     {
         char nextPosition;
         int nextMove;
@@ -84,7 +145,9 @@ public sealed class MonkeyMap
         {
             nextMove = MoveHorizontally(map, position, move);
 
-            nextPosition = map[position[0]][nextMove];
+            nextPosition = isCube ?
+                map[position[0]][position[1] + move] :
+                map[position[0]][nextMove];
 
             if (nextPosition == '#')
                 return nextPosition;
@@ -95,7 +158,9 @@ public sealed class MonkeyMap
         {
             nextMove = MoveVertically(map, position, move);
 
-            nextPosition = map[nextMove][position[1]];
+            nextPosition = isCube ?
+                map[position[0] + move][position[1]] :
+                map[nextMove][position[1]];
 
             if (nextPosition == '#')
                 return nextPosition;

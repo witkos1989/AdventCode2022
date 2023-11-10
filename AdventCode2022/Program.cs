@@ -257,8 +257,10 @@ switch (day)
 
         results = monkeyMap.Results();
 
-        Console.WriteLine("Day 22 results: Final password for first puzzle = {0};",
-            results[0]);
+        Console.WriteLine("Day 22 results: Final password for first puzzle = {0}; " +
+            "Final password for second puzzle = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
