@@ -3,6 +3,7 @@
 public sealed class UnstableDiffusion
 {
     private readonly char[][] _grove;
+    private readonly Queue<(int, int)> _directions;
 
     public UnstableDiffusion()
     {
@@ -12,35 +13,29 @@ public sealed class UnstableDiffusion
         IEnumerable<string?> rawData = file.ImportData();
 
         _grove = ProcessData(rawData.ToArray()).ToArray();
+
+        _directions = new(new (int, int)[] { (-1, 0), (1, 0), (0, -1), (0, 1) });
     }
 
     public int[] Results()
     {
         int[] results = new int[2];
 
-        results[0] = CountEmptyGround(_grove);
+        results[0] = CountEmptyGround(_grove, _directions);
+
+        results[1] = RealocateElves(int.MaxValue, _grove, _directions) + 10;
 
         return results;
     }
 
-    private static void DrawGrove(char[][] grove)
-    {
-        for (int i = 0; i < grove.Length; i++)
-        {
-            for (int j = 0; j < grove[i].Length; j++)
-            {
-                Console.Write(grove[i][j]);
-            }
-            Console.WriteLine();
-        }
-    }
-
-    private static int CountEmptyGround(char[][] grove)
+    private static int CountEmptyGround(
+        char[][] grove,
+        Queue<(int, int)> directions)
     {
         int maxX = 0, maxY = 0, minX = grove.Length, minY = grove.Length;
         int sum = 0;
 
-        RealocateElves(grove);
+        RealocateElves(10, grove, directions);
 
         for (int i = 0; i < grove.Length; i++)
         {
@@ -71,17 +66,21 @@ public sealed class UnstableDiffusion
         return sum;
     }
 
-    private static void RealocateElves(char[][] grove)
+    private static int RealocateElves(
+        int steps,
+        char[][] grove,
+        Queue<(int, int)> directions)
     {
-        Queue<(int, int)> directions = new(
-            new (int, int)[] { (-1, 0), (1, 0), (0, -1), (0, 1) });
         Dictionary<(int, int), (int, int, bool)> moveTo = new();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < steps; i++)
         {
             CanMove(grove, directions, moveTo);
 
             Move(grove, moveTo);
+
+            if (moveTo.Count == 0)
+                return i + 1;
 
             moveTo.Clear();
             
@@ -89,6 +88,8 @@ public sealed class UnstableDiffusion
 
             directions.Enqueue(direction);
         }
+
+        return -1;
     }
 
     private static void Move(
@@ -136,7 +137,6 @@ public sealed class UnstableDiffusion
                 }
             } 
         }
-        
     }
 
     private static bool CheckAdjacentPositions(int x, int y, char[][] grove) =>
@@ -205,9 +205,9 @@ public sealed class UnstableDiffusion
     {
         int rowLength = data.Length;
         
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
         {
-            yield return Enumerable.Repeat('.', rowLength + 20).ToArray();
+            yield return Enumerable.Repeat('.', rowLength + 200).ToArray();
         }
 
         foreach (string? line in data)
@@ -215,15 +215,15 @@ public sealed class UnstableDiffusion
             if (string.IsNullOrEmpty(line))
                 continue;
 
-            char[] groveLine = Enumerable.Repeat('.', 10).Concat(line).
-                Concat(Enumerable.Repeat('.', 10)).ToArray();
+            char[] groveLine = Enumerable.Repeat('.', 100).Concat(line).
+                Concat(Enumerable.Repeat('.', 100)).ToArray();
 
             yield return groveLine;
         }
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
         {
-            yield return Enumerable.Repeat('.', rowLength + 20).ToArray();
+            yield return Enumerable.Repeat('.', rowLength + 200).ToArray();
         }
     }
 }

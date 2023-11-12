@@ -282,8 +282,10 @@ switch (day)
         results = unstableDiffusion.Results();
 
         Console.WriteLine("Day 23 results: " +
-            "Empty ground tiles in the grove = {0};",
-            results[0]);
+            "Empty ground tiles in the grove = {0}; " +
+            "First round where noone moves = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
