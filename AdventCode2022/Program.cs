@@ -20,6 +20,7 @@ using AdventCode2022.Day19;
 using AdventCode2022.Day20;
 using AdventCode2022.Day21;
 using AdventCode2022.Day22;
+using AdventCode2022.Day23;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -39,8 +40,8 @@ switch (day)
 
         results = elfExpedition.Solutions();
 
-        Console.WriteLine(
-            "Day 1 results: Elf with maximal calories in backpack = {0}; " +
+        Console.WriteLine("Day 1 results: " +
+            "Elf with maximal calories in backpack = {0}; " +
             "Top three elves with maximal calories in backpack = {1}",
             results[0],
             results[1]);
@@ -50,8 +51,8 @@ switch (day)
 
         results = RPSGame.Solutions();
 
-        Console.WriteLine(
-            "Day 2 results: Game score without knowing the instructions = {0}; " +
+        Console.WriteLine("Day 2 results: " +
+            "Game score without knowing the instructions = {0}; " +
             "Game score knowing the instructions = {1}",
             results[0],
             results[1]);
@@ -61,8 +62,8 @@ switch (day)
 
         results = reorganization.Solutions();
 
-        Console.WriteLine(
-            "Day 3 results: Sum of product priorities found in both compartments in backpack = {0}; " +
+        Console.WriteLine("Day 3 results: " +
+            "Sum of product priorities found in both compartments in backpack = {0}; " +
             "Sum of product priorities found in each three-Elf group = {1}",
             results[0],
             results[1]);
@@ -72,8 +73,8 @@ switch (day)
 
         results = campCleanup.Solutions();
 
-        Console.WriteLine(
-            "Day 4 results: Assignments that fully covers one another = {0}; " +
+        Console.WriteLine("Day 4 results: " +
+            "Assignments that fully covers one another = {0}; " +
             "Assignments that overlaps one another = {1}",
             results[0],
             results[1]);
@@ -83,8 +84,8 @@ switch (day)
 
         string[] supplyResults = supplyStacks.Solutions();
 
-        Console.WriteLine(
-            "Day 5 results: Crates on top of each stack after rearrangement = {0}; " +
+        Console.WriteLine("Day 5 results: " +
+            "Crates on top of each stack after rearrangement = {0}; " +
             "Crates on top of each stack after rearrangement using new crane = {1}",
             supplyResults[0],
             supplyResults[1]);
@@ -94,8 +95,8 @@ switch (day)
 
         results = tuningTrouble.Solutions();
 
-        Console.WriteLine(
-            "Day 6 results: Start-of-packet marker found after {0} characters; " +
+        Console.WriteLine("Day 6 results: " +
+            "Start-of-packet marker found after {0} characters; " +
             "Start-of-message marker found after {1} characters",
             results[0],
             results[1]);
@@ -105,8 +106,8 @@ switch (day)
 
         results = noSpaceLeft.ShowResult();
 
-        Console.WriteLine(
-            "Day 7 results: Total size of directories with size under 100000 = {0}; " +
+        Console.WriteLine("Day 7 results: " +
+            "Total size of directories with size under 100000 = {0}; " +
             "Smallest directory size that needs to be deleted to free enough memory = {1}",
             results[0],
             results[1]);
@@ -116,8 +117,8 @@ switch (day)
 
         results = treetopTreeHouse.Results();
 
-        Console.WriteLine(
-            "Day 8 results: Tree coverage in the forest = {0}; " +
+        Console.WriteLine("Day 8 results: " +
+            "Tree coverage in the forest = {0}; " +
             "Tree with highest scenic score = {1}",
             results[0],
             results[1]);
@@ -127,8 +128,8 @@ switch (day)
 
         results = ropeBridge.Results();
 
-        Console.WriteLine(
-            "Day 9 results: Positions visited by the tail at least once with two knots = {0}; " +
+        Console.WriteLine("Day 9 results: " +
+            "Positions visited by the tail at least once with two knots = {0}; " +
             "Positions visited by the tail at least once with ten knots = {1}",
             results[0],
             results[1]);
@@ -138,7 +139,8 @@ switch (day)
 
         int signalStrength = cathodeRayTube.Result();
 
-        Console.Write("Day 10 results: Sum of six signal strengths = {0}; ",
+        Console.Write("Day 10 results: " +
+            "Sum of six signal strengths = {0}; ",
             signalStrength);
 
         cathodeRayTube.GenerateResultOnScreen();
@@ -151,7 +153,8 @@ switch (day)
 
         long secondResult = monkeyInTheMiddle.Results(2);
 
-        Console.WriteLine("Day 11 results: Level of monkey business with fixed worry level = {0}; " +
+        Console.WriteLine("Day 11 results: " +
+            "Level of monkey business with fixed worry level = {0}; " +
             "Level of monkey business with calculated worry level = {1}",
             firstResult,
             secondResult);
@@ -161,7 +164,8 @@ switch (day)
 
         results = hillClimbing.Results();
 
-        Console.WriteLine("Day 12 results: Shortest path to get to the top position on the map = {0}; " +
+        Console.WriteLine("Day 12 results: " +
+            "Shortest path to get to the top position on the map = {0}; " +
             "Shortest path to get to the top from any lowest point = {1}",
             results[0],
             results[1]);
@@ -171,7 +175,8 @@ switch (day)
 
         results = distressSignal.Results();
 
-        Console.WriteLine("Day 13 results: Sum of valid indices = {0}; " +
+        Console.WriteLine("Day 13 results: " +
+            "Sum of valid indices = {0}; " +
             "Decoder key for the distress signal = {1}",
             results[0],
             results[1]);
@@ -181,7 +186,8 @@ switch (day)
 
         results = regolithReservoir.Results();
 
-        Console.WriteLine("Day 14 results: Units of sand came to rest before overflowing = {0}; " +
+        Console.WriteLine("Day 14 results: " +
+            "Units of sand came to rest before overflowing = {0}; " +
             "Units of sand came to rest before filling cave = {1}",
             results[0],
             results[1]);
@@ -191,7 +197,8 @@ switch (day)
 
         results = beaconExclusionZone.Results();
 
-        Console.WriteLine("Day 15 results: Positions that doesn't contain beacon in selected row = {0}; " +
+        Console.WriteLine("Day 15 results: " +
+            "Positions that doesn't contain beacon in selected row = {0}; " +
             "Tuning frequency of distress signal = {1}",
             results[0],
             results[1]);
@@ -201,7 +208,8 @@ switch (day)
 
         results = proboscideaVolcanium.Results();
 
-        Console.WriteLine("Day 16 results: Most pressure that can be realeased = {0}; ",
+        Console.WriteLine("Day 16 results: " +
+            "Most pressure that can be realeased = {0}; ",
             results[0]);
         break;
     case 17:
@@ -209,7 +217,8 @@ switch (day)
 
         results = pyroclasticFlow.Results();
 
-        Console.WriteLine("Day 17 results: Height of tower after 2022 rocks have fallen = {0}; ",
+        Console.WriteLine("Day 17 results: " +
+            "Height of tower after 2022 rocks have fallen = {0}; ",
             results[0]);
         break;
     case 18:
@@ -217,7 +226,8 @@ switch (day)
 
         results = boilingBoulders.Results();
 
-        Console.WriteLine("Day 18 results: Surface area of scanned lava droplets = {0}; " +
+        Console.WriteLine("Day 18 results: " +
+            "Surface area of scanned lava droplets = {0}; " +
             "Exterior surface ares of scanned lava droplets = {1}",
             results[0],
             results[1]);
@@ -227,7 +237,8 @@ switch (day)
 
         results = notEnoughMinerals.Results();
 
-        Console.WriteLine("Day 19 results: Quality level of all of the blueprints = {0}; " +
+        Console.WriteLine("Day 19 results: " +
+            "Quality level of all of the blueprints = {0}; " +
             "Largest number of geodes using three first blueprints = {1}",
             results[0],
             results[1]);
@@ -237,7 +248,8 @@ switch (day)
 
         longResults = grovePositioningSystem.Results();
 
-        Console.WriteLine("Day 20 results: Sum of numbers that create grove coordinates = {0}; " +
+        Console.WriteLine("Day 20 results: " +
+            "Sum of numbers that create grove coordinates = {0}; " +
             "Sum of numbers that create grove coordinates using decryption key = {1}",
             longResults[0],
             longResults[1]);
@@ -247,7 +259,8 @@ switch (day)
 
         longResults = monkeyMath.Results();
 
-        Console.WriteLine("Day 21 results: Root monkey yells = {0}; " +
+        Console.WriteLine("Day 21 results: " +
+            "Root monkey yells = {0}; " +
             "I should yell = {1}",
             longResults[0],
             longResults[1]);
@@ -257,10 +270,20 @@ switch (day)
 
         results = monkeyMap.Results();
 
-        Console.WriteLine("Day 22 results: Final password for first puzzle = {0}; " +
+        Console.WriteLine("Day 22 results: " +
+            "Final password for first puzzle = {0}; " +
             "Final password for second puzzle = {1}",
             results[0],
             results[1]);
+        break;
+    case 23:
+        UnstableDiffusion unstableDiffusion = new();
+
+        results = unstableDiffusion.Results();
+
+        Console.WriteLine("Day 23 results: " +
+            "Empty ground tiles in the grove = {0};",
+            results[0]);
         break;
     default:
         break;
