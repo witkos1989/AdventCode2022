@@ -21,6 +21,7 @@ using AdventCode2022.Day20;
 using AdventCode2022.Day21;
 using AdventCode2022.Day22;
 using AdventCode2022.Day23;
+using AdventCode2022.Day24;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -286,6 +287,15 @@ switch (day)
             "First round where noone moves = {1}",
             results[0],
             results[1]);
+        break;
+    case 24:
+        BlizzardBasin blizzardBasin = new();
+
+        results = blizzardBasin.Results();
+
+        Console.WriteLine("Day 24 results: " +
+            "Fastest time to reach the goal and avoid blizzards = {0};",
+            results[0]);
         break;
     default:
         break;
