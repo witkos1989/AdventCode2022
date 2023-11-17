@@ -18,52 +18,68 @@ public sealed class BlizzardBasin
     {
         int[] results = new int[2];
 
+        Console.WriteLine("Processing...");
+
         results[0] = FastestPath(_blizzards);
 
+        Console.WriteLine("First solution solved...");
+
+        results[1] = ThereAndBackAgain(_blizzards);
+
         return results;
+    }
+
+    private static int ThereAndBackAgain(Valley[] blizzards)
+    {
+        (int startX, int startY) = blizzards.First().Position;
+        (int endX, int endY) = blizzards.Last().Position;
+        int time = 1;
+
+        time = PathBFS(startX + 1, startY, endX - 1, endY, time, blizzards);
+
+        Console.WriteLine("Reached the goal...");
+
+        time = PathBFS(endX - 1, endY, startX + 1, startY, time, blizzards);
+
+        Console.WriteLine("Came back...");
+
+        time = PathBFS(startX + 1, startY, endX - 1, endY, time, blizzards);
+
+        return time;
     }
 
     private static int FastestPath(Valley[] blizzards)
     {
         (int X, int Y) = blizzards.First().Position;
-        int maxX = blizzards.Last().Position.X - 1;
-        int maxY = blizzards.Last().Position.Y;
-        int fastestTime = int.MaxValue;
+        (int endX, int endY) = blizzards.Last().Position;
         int time = 1;
 
-        while (fastestTime == int.MaxValue)
-        {
-            PathBFS(X + 1, Y, maxX, maxY, time, ref fastestTime, blizzards);
+        time = PathBFS(X + 1, Y, endX - 1, endY, time, blizzards);
 
-            time += 1;
-        }
-        return fastestTime;
+        return time;
     }
 
     private static int PathBFS(
         int x,
         int y,
-        int maxX,
-        int maxY,
+        int goalX,
+        int goalY,
         int time,
-        ref int fTime,
         Valley[] blizzards)
     {
-        Queue<(int, int, int)> stack = new();
+        Queue<(int, int, int)> queue = new();
         Dictionary<(int, int, int), (int, int, int)> seen = new();
+        int maxX = blizzards.Last().Position.X - 1;
+        int maxY = blizzards.Last().Position.Y;
 
-        stack.Enqueue((x, y, time));
+        queue.Enqueue((x, y, time));
 
-        while (stack.Count > 0)
+        while (queue.Count > 0)
         {
-            (int X, int Y, int Time) = stack.Dequeue();
+            (int X, int Y, int Time) = queue.Dequeue();
 
-            if (X == maxX && Y == maxY)
-            {
-                fTime = Math.Min(Time + 1, fTime);
-
-                return fTime;
-            }
+            if (X == goalX && Y == goalY)
+                return Time + 1;
 
             if (seen.ContainsKey((X, Y, Time)))
                 continue;
@@ -73,29 +89,29 @@ public sealed class BlizzardBasin
             if (Y + 1 <= maxY &&
                 !CheckIfBlizzardIsInPosition(
                     X, Y + 1, maxX, maxY, Time + 1, blizzards))
-                stack.Enqueue((X, Y + 1, Time + 1));
+                queue.Enqueue((X, Y + 1, Time + 1));
 
             if (X + 1 <= maxX &&
                 !CheckIfBlizzardIsInPosition(
                     X + 1, Y, maxX, maxY, Time + 1, blizzards))
-                stack.Enqueue((X + 1, Y, Time + 1));
+                queue.Enqueue((X + 1, Y, Time + 1));
 
             if (!CheckIfBlizzardIsInPosition(
                 X, Y, maxX, maxY, Time + 1, blizzards))
-                stack.Enqueue((X, Y, Time + 1));
+                queue.Enqueue((X, Y, Time + 1));
 
             if (Y - 1 >= 1 &&
                 !CheckIfBlizzardIsInPosition(
                     X, Y - 1, maxX, maxY, Time + 1, blizzards))
-                stack.Enqueue((X, Y - 1, Time + 1));
+                queue.Enqueue((X, Y - 1, Time + 1));
 
             if (X - 1 >= 1 &&
                 !CheckIfBlizzardIsInPosition(
                     X - 1, Y, maxX, maxY, Time + 1, blizzards))
-                stack.Enqueue((X - 1, Y, Time + 1));
+                queue.Enqueue((X - 1, Y, Time + 1));
         }
 
-        return fTime;
+        return time + 1;
     }
 
     private static bool CheckIfBlizzardIsInPosition(

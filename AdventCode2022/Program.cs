@@ -294,8 +294,10 @@ switch (day)
         results = blizzardBasin.Results();
 
         Console.WriteLine("Day 24 results: " +
-            "Fastest time to reach the goal and avoid blizzards = {0};",
-            results[0]);
+            "Fastest time to reach the goal and avoid blizzards = {0}; " +
+            "Fastest time to reach the goal, go back and reach the goal once again = {1}",
+            results[0],
+            results[1]);
         break;
     default:
         break;
