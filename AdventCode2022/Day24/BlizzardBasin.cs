@@ -122,9 +122,11 @@ public sealed class BlizzardBasin
         int time,
         Valley[] blizzards)
     {
+        Valley[] filteredBlizzards = blizzards.
+            Where(b => b.Position.X == x || b.Position.Y == y).ToArray();
         int newX = 0, newY = 0;
 
-        foreach (Valley blizzard in blizzards)
+        foreach (Valley blizzard in filteredBlizzards)
         {
             if (blizzard.BlizzardDirection.X != 0)
             {
