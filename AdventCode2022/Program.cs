@@ -22,6 +22,7 @@ using AdventCode2022.Day21;
 using AdventCode2022.Day22;
 using AdventCode2022.Day23;
 using AdventCode2022.Day24;
+using AdventCode2022.Day25;
 
 Console.Write("Which day of advent of code puzzle would you like to run: ");
 
@@ -298,6 +299,15 @@ switch (day)
             "Fastest time to reach the goal, go back and reach the goal once again = {1}",
             results[0],
             results[1]);
+        break;
+    case 25:
+        FullOfHotAir fullOfHotAir = new();
+
+        string stringResult = fullOfHotAir.Result();
+
+        Console.WriteLine("Day 25 results: " +
+            "SNAFU number supplied to Bob's console = {0}",
+            stringResult);
         break;
     default:
         break;
