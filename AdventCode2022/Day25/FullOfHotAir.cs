@@ -19,10 +19,8 @@ public sealed class FullOfHotAir
 
     private static string ToSnafu(long @decimal)
     {
-        List<long> listOfFives = new();
+        List<long> listOfFives = new() { 1 };
         long powerOfFive = 1;
-
-        listOfFives.Add(powerOfFive);
 
         while (@decimal * 2 > powerOfFive * 5)
             listOfFives.Add(powerOfFive *= 5);
@@ -55,16 +53,9 @@ public sealed class FullOfHotAir
         return new string(snafus);
     }
 
-    private static long ToDecimal(string snafu)
-    {
-        long result = 0;
-
-        for (int i = snafu.Length - 1; i >= 0; i--)
-            result += CalculateResult(snafu[i],
-                (long)Math.Pow(5, snafu.Length - i - 1));
-
-        return result;
-    }
+    private static long ToDecimal(string snafu) =>
+        snafu.Select((s, i) =>
+        CalculateResult(s, (long)Math.Pow(5, snafu.Length - i - 1))).Sum();
 
     private static long CalculateResult(char snafuSign, long powerOfFive) =>
         snafuSign switch
